@@ -1864,21 +1864,7 @@ class PretrainedLegalReasoner:
     """
     def __init__(self, model_name: Optional[str] = None, device: Optional[str] = None):
         if model_name is None:
-            # Auto-scale local reasoner: use Qwen2.5-7B-Instruct if high-capacity GPU (Colab T4/L4/A100 >= 12GB) is available
-            auto_model = "Qwen/Qwen2.5-3B-Instruct"
-            try:
-                import torch
-                if torch.cuda.is_available():
-                    vram_gb = torch.cuda.get_device_properties(0).total_memory / (1024 ** 3)
-                    if vram_gb >= 12.0:
-                        auto_model = "Qwen/Qwen2.5-7B-Instruct"
-                        logger.info(f"[Reasoner] High-capacity GPU detected ({vram_gb:.1f} GB VRAM). Defaulting to 4-bit: {auto_model}")
-                    else:
-                        auto_model = "Qwen/Qwen2.5-3B-Instruct"
-                        logger.info(f"[Reasoner] Standard GPU detected ({vram_gb:.1f} GB VRAM). Defaulting to 4-bit: {auto_model}")
-            except Exception:
-                pass
-            model_name = os.environ.get("DLKR_REASONER_MODEL", auto_model)
+            model_name = os.environ.get("DLKR_REASONER_MODEL", getattr(config, "INLEGAL_LLAMA_MODEL_NAME", "sudipto-ducs/InLegalLLaMA-Instruct"))
         self.model_name = model_name
         self.device = device
         self.is_loaded = False
@@ -1889,26 +1875,32 @@ class PretrainedLegalReasoner:
         try:
             import torch
             if not torch.cuda.is_available():
-                logger.info("[Reasoner] No CUDA GPU detected. Active in Deterministic Rule Engine mode.")
+                logger.info("[InLegalLLaMA] No CUDA GPU detected. Operating in High-Speed Deterministic Prober mode.")
                 return
 
             from transformers import AutoTokenizer, AutoModelForCausalLM, pipeline, BitsAndBytesConfig
             bnb_config = BitsAndBytesConfig(
                 load_in_4bit=True,
                 bnb_4bit_compute_dtype=torch.float16,
-                bnb_4bit_quant_type="nf4"
+                bnb_4bit_quant_type="nf4",
+                bnb_4bit_use_double_quant=True
             )
-            tokenizer = AutoTokenizer.from_pretrained(self.model_name)
+            logger.info(f"[InLegalLLaMA] Loading {self.model_name} in 4-bit NF4 on GPU...")
+            tokenizer = AutoTokenizer.from_pretrained(self.model_name, use_fast=False)
+            if tokenizer.pad_token is None:
+                tokenizer.pad_token = tokenizer.eos_token
             model = AutoModelForCausalLM.from_pretrained(
                 self.model_name,
                 quantization_config=bnb_config,
-                device_map="auto"
+                device_map="auto",
+                torch_dtype=torch.float16,
+                low_cpu_mem_usage=True
             )
             self.pipeline = pipeline("text-generation", model=model, tokenizer=tokenizer)
             self.is_loaded = True
-            logger.info(f"[Reasoner] Successfully loaded {self.model_name} in 4-bit on GPU.")
+            logger.info(f"[InLegalLLaMA] ✅ Successfully loaded 4-bit {self.model_name} on GPU (~4.5 GB VRAM).")
         except Exception as e:
-            logger.info(f"[Reasoner Notice] Neural weights deferred ({e}). High-speed Deterministic Rule Engine active.")
+            logger.info(f"[InLegalLLaMA Notice] Weight loading deferred ({e}). High-speed Deterministic Rule Engine active.")
             self.is_loaded = False
 
     def _sync_facts_from_llm(self, facts: AtomicCaseFacts, parsed: Dict[str, Any]) -> AtomicCaseFacts:
@@ -2086,7 +2078,16 @@ class PretrainedLegalReasoner:
                     {"role": "system", "content": system_prompt},
                     {"role": "user", "content": f"Case Facts:\n{fact_text}"}
                 ]
-                if hasattr(self.pipeline, "tokenizer") and hasattr(self.pipeline.tokenizer, "apply_chat_template"):
+                if "llama" in str(self.model_name).lower():
+                    prompt = (
+                        f"<s>[INST] <<SYS>>\n{system_prompt}\n<</SYS>>\n\n"
+                        f"Case Narrative:\n{fact_text} [/INST]\n"
+                    )
+                elif hasattr(self.pipeline, "tokenizer") and hasattr(self.pipeline.tokenizer, "apply_chat_template"):
+                    messages = [
+                        {"role": "system", "content": system_prompt},
+                        {"role": "user", "content": f"Case Facts:\n{fact_text}"}
+                    ]
                     prompt = self.pipeline.tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
                 else:
                     prompt = f"<|im_start|>system\n{system_prompt}<|im_end|>\n<|im_start|>user\nCase Facts:\n{fact_text}<|im_end|>\n<|im_start|>assistant\n"
@@ -2100,11 +2101,17 @@ class PretrainedLegalReasoner:
                 raw_gen = outputs[0]["generated_text"].strip()
                 if "<|im_start|>assistant" in raw_gen:
                     raw_gen = raw_gen.split("<|im_start|>assistant")[-1].strip()
+                if "[/INST]" in raw_gen:
+                    raw_gen = raw_gen.split("[/INST]")[-1].strip()
 
                 json_match = re.search(r"\{[\s\S]*\}", raw_gen)
                 if json_match:
                     parsed = json.loads(json_match.group(0))
-                    parsed["engine"] = f"Pretrained Neural LLM ({self.model_name} 4-Bit GPU)"
+                    if "primary_article_ipc" in parsed:
+                        from llm_reasoner import normalize_statutory_code, normalize_penalty_tier
+                        parsed["primary_article_ipc"] = normalize_statutory_code(parsed["primary_article_ipc"])
+                        parsed["penalty_tier"] = normalize_penalty_tier(parsed.get("penalty_tier", ""))
+                    parsed["engine"] = f"InLegalLLaMA Dual-Engine Reasoner ({self.model_name} 4-Bit GPU)"
                     parsed["ratio_decidendi"] = parsed.get("judicial_ratio", "")
                     facts = self._sync_facts_from_llm(facts, parsed)
                     return facts, parsed
@@ -4606,8 +4613,13 @@ class DynamicLjpPipeline:
         else:
             logger.info("[Pipeline] Operating in high-speed Dense Semantic Prober mode (CPU).")
 
-    def run(self, fact_text: str) -> Dict[str, Any]:
-        atomic_facts, legal_reasoning = self.reasoner.comprehend_and_reason(fact_text, self.gate.extractor)
+    def run(self, fact_text: str, force_prober: bool = False) -> Dict[str, Any]:
+        if force_prober:
+            atomic_facts = self.gate.extractor.extract(fact_text)
+            legal_reasoning = self.reasoner._prober_reason(fact_text, atomic_facts)
+            legal_reasoning["ratio_decidendi"] = legal_reasoning.get("judicial_ratio", "")
+        else:
+            atomic_facts, legal_reasoning = self.reasoner.comprehend_and_reason(fact_text, self.gate.extractor)
         raw_candidates = self.retriever.retrieve(fact_text, atomic_facts=atomic_facts, legal_reasoning=legal_reasoning)
         gate_results = self.gate.filter_knowledge(fact_text, raw_candidates, atomic_facts=atomic_facts)
         gated_knowledge = gate_results["gated_knowledge"]
@@ -4804,7 +4816,7 @@ SAMPLE_MATRIMONIAL = """The victim was married to the principal accused in Decem
 SAMPLE_CIVIL_NOISE = """Dispute over unpaid consulting invoices and delay in delivery of software source code under a service contract. Both commercial parties had agreed to an arbitration clause. No criminal deception occurred at the inception of the agreement."""
 
 
-def process_case(fact_text: str):
+def process_case(fact_text: str, engine_mode: str = "🚀 InLegalLLaMA Dual-Engine (Generative + InLegalBERT)"):
     """
     Safely processes case narrative through the DLKR-LJP pipeline.
     HTML-escapes all dynamic content to eliminate XSS / markup injection.
@@ -4815,7 +4827,8 @@ def process_case(fact_text: str):
 
     try:
         pipeline = get_pipeline()
-        result = pipeline.run(fact_text)
+        force_prober = "Deterministic" in str(engine_mode) or "Prober" in str(engine_mode)
+        result = pipeline.run(fact_text, force_prober=force_prober)
         preds = result.get("predictions", {})
         legal_reasoning = result.get("legal_reasoning", {})
 
@@ -5042,6 +5055,14 @@ def build_gradio_dashboard():
 
         with gr.Row():
             with gr.Column(scale=5):
+                engine_selector = gr.Radio(
+                    choices=[
+                        "🚀 InLegalLLaMA Dual-Engine (Generative Reasoner + InLegalBERT)",
+                        "⚡ Dense Statutory Prober (Deterministic Mode)"
+                    ],
+                    value="🚀 InLegalLLaMA Dual-Engine (Generative Reasoner + InLegalBERT)",
+                    label="🧠 Judicial Reasoner Engine Configuration"
+                )
                 fact_input = gr.Textbox(
                     label="Case Fact Narrative (Indian Criminal Jurisprudence)",
                     placeholder="Enter the factual summary of the criminal case (e.g. accused actions, weapon, injuries, motive, time, date)...",
@@ -5128,19 +5149,19 @@ Performance evaluated on Indian Criminal Documents & Benchmark Ground-Truth Corp
         ]
         all_outputs = [fact_input] + outputs_list
 
-        submit_btn.click(fn=process_case, inputs=[fact_input], outputs=outputs_list)
-        fact_input.submit(fn=process_case, inputs=[fact_input], outputs=outputs_list)
+        submit_btn.click(fn=process_case, inputs=[fact_input, engine_selector], outputs=outputs_list)
+        fact_input.submit(fn=process_case, inputs=[fact_input, engine_selector], outputs=outputs_list)
 
-        def run_sample_case(sample_text: str):
-            res = process_case(sample_text)
+        def run_sample_case(sample_text: str, engine_choice: str):
+            res = process_case(sample_text, engine_choice)
             return (sample_text, *res)
 
-        btn_theft.click(fn=lambda: run_sample_case(SAMPLE_THRISSUR_THEFT), inputs=[], outputs=all_outputs)
-        btn_fight.click(fn=lambda: run_sample_case(SAMPLE_KAKKANAD_EXCEPTION4), inputs=[], outputs=all_outputs)
-        btn_cheat.click(fn=lambda: run_sample_case(SAMPLE_CHEATING), inputs=[], outputs=all_outputs)
-        btn_rob.click(fn=lambda: run_sample_case(SAMPLE_ROBBERY), inputs=[], outputs=all_outputs)
-        btn_mat.click(fn=lambda: run_sample_case(SAMPLE_MATRIMONIAL), inputs=[], outputs=all_outputs)
-        btn_civil.click(fn=lambda: run_sample_case(SAMPLE_CIVIL_NOISE), inputs=[], outputs=all_outputs)
+        btn_theft.click(fn=lambda e: run_sample_case(SAMPLE_THRISSUR_THEFT, e), inputs=[engine_selector], outputs=all_outputs)
+        btn_fight.click(fn=lambda e: run_sample_case(SAMPLE_KAKKANAD_EXCEPTION4, e), inputs=[engine_selector], outputs=all_outputs)
+        btn_cheat.click(fn=lambda e: run_sample_case(SAMPLE_CHEATING, e), inputs=[engine_selector], outputs=all_outputs)
+        btn_rob.click(fn=lambda e: run_sample_case(SAMPLE_ROBBERY, e), inputs=[engine_selector], outputs=all_outputs)
+        btn_mat.click(fn=lambda e: run_sample_case(SAMPLE_MATRIMONIAL, e), inputs=[engine_selector], outputs=all_outputs)
+        btn_civil.click(fn=lambda e: run_sample_case(SAMPLE_CIVIL_NOISE, e), inputs=[engine_selector], outputs=all_outputs)
 
         def clear_all():
             empty_html = "<div style='color: #94a3b8; padding: 12px;'>Ready for case facts.</div>"

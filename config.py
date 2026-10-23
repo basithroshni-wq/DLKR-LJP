@@ -33,8 +33,10 @@ HEAD_WEIGHTS_FILENAME = "legal_bert_heads_v5_1.pt"
 BACKBONE_MODEL_NAME = "law-ai/InLegalBERT"
 EMBEDDING_MODEL_NAME = "law-ai/InLegalBERT"
 FALLBACK_EMBEDDING_MODEL_NAME = "sentence-transformers/all-MiniLM-L6-v2"
-DEFAULT_REASONER_MODEL = os.environ.get("QWEN_MODEL_NAME", "Qwen/Qwen2.5-7B-Instruct")
+INLEGAL_LLAMA_MODEL_NAME = os.environ.get("INLEGAL_LLAMA_MODEL", "sudipto-ducs/InLegalLLaMA-Instruct")
+DEFAULT_REASONER_MODEL = os.environ.get("DLKR_REASONER_MODEL", INLEGAL_LLAMA_MODEL_NAME)
 FALLBACK_REASONER_MODEL = os.environ.get("FALLBACK_MODEL_NAME", "Qwen/Qwen2.5-3B-Instruct")
+ENABLE_4BIT_QUANTIZATION = True
 
 # DLKR Neural Transformer Core Configuration
 OPENAI_API_BASE = os.environ.get("OPENAI_API_BASE", "")
