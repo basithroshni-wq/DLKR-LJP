@@ -5007,27 +5007,42 @@ def process_case(fact_text: str, engine_mode: str = "🚀 InLegalLLaMA Dual-Engi
 
 
 # Optional Gradio Dashboard Builder
-def _patch_gradio_compatibility(gr_module):
+def _patch_gradio_compatibility(gr_module=None):
     """
     Self-healing polyfill for Gradio 4.x / 5.x / 6.x environment anomalies (e.g. Kaggle Python 3.13).
-    Ensures gradio.components has 'Component' attribute so Block.render() never crashes.
+    Ensures gradio.components and gradio.blocks.components always have 'Component'.
     """
-    if gr_module is None:
-        return
+    import sys
     try:
-        import gradio.components as g_comp
-        if not hasattr(g_comp, "Component"):
-            comp_cls = getattr(gr_module, "Component", None)
-            if comp_cls is None:
+        import audioop
+    except ImportError:
+        try:
+            import audioop_lts as audioop
+            sys.modules["audioop"] = audioop
+        except Exception:
+            pass
+
+    try:
+        comp_cls = None
+        try:
+            from gradio.components.base import Component as comp_cls
+        except Exception:
+            if gr_module and hasattr(gr_module, "Component"):
+                comp_cls = gr_module.Component
+            else:
                 try:
-                    from gradio.components.base import Component as comp_cls
+                    from gradio.component_meta import Component as comp_cls
                 except Exception:
-                    try:
-                        from gradio.component_meta import Component as comp_cls
-                    except Exception:
-                        class comp_cls:
-                            pass
-            g_comp.Component = comp_cls
+                    class comp_cls:
+                        pass
+
+        import gradio.components as g_comp
+        g_comp.Component = comp_cls
+
+        if "gradio.components" in sys.modules:
+            sys.modules["gradio.components"].Component = comp_cls
+        if "gradio.blocks" in sys.modules and hasattr(sys.modules["gradio.blocks"], "components"):
+            sys.modules["gradio.blocks"].components.Component = comp_cls
     except Exception:
         pass
 
