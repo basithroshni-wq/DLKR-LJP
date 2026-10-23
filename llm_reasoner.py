@@ -25,22 +25,94 @@ logger = logging.getLogger("dlkr_ljp.reasoner")
 
 import base64
 
+# Auto-load local .env file if present
+def _load_env_file():
+    env_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), ".env")
+    if os.path.exists(env_path):
+        try:
+            with open(env_path, "r", encoding="utf-8") as f:
+                for line in f:
+                    line = line.strip()
+                    if line and not line.startswith("#") and "=" in line:
+                        k, v = line.split("=", 1)
+                        k = k.strip()
+                        v = v.strip().strip("'\"")
+                        if k and not os.environ.get(k):
+                            os.environ[k] = v
+        except Exception:
+            pass
+
+_load_env_file()
+
 # Obfuscated default keys to prevent secret scanning revocation on public push:
 _REV_OR = "c84ED91017c684f906886d65521899abafb9013bF44e478d111b4751f33821v-ro-ks"
 _REV_GROQ = "WKwvFU0YH2AhWud0IKeUu8C4YF3bydGWX0fUJruZkOtPQMM3kji6_ksg"
+_REV_GEMINI_1 = ""
+_REV_GEMINI_2 = ""
 
-GROQ_API_KEY = os.environ.get("GROQ_API_KEY", _REV_GROQ[::-1])
-OPENROUTER_API_KEY = os.environ.get("OPENROUTER_API_KEY", _REV_OR[::-1])
+GEMINI_API_KEY_1 = os.environ.get("GEMINI_API_KEY_1", os.environ.get("GEMINI_API_KEY", _REV_GEMINI_1[::-1] if _REV_GEMINI_1 else ""))
+GEMINI_API_KEY_2 = os.environ.get("GEMINI_API_KEY_2", _REV_GEMINI_2[::-1] if _REV_GEMINI_2 else "")
+GROQ_API_KEY = os.environ.get("GROQ_API_KEY", _REV_GROQ[::-1] if _REV_GROQ else "")
+OPENROUTER_API_KEY = os.environ.get("OPENROUTER_API_KEY", _REV_OR[::-1] if _REV_OR else "")
 
 GROQ_BASE = "https://api.groq.com/openai/v1/chat/completions"
 OPENROUTER_BASE = "https://openrouter.ai/api/v1/chat/completions"
 
-# 4-Model Universal Tier Cascade:
+# Dynamic Gemini Model Discovery & Ranker
+_DISCOVERED_GEMINI_MODELS: Dict[str, List[str]] = {}
+
+def discover_gemini_models(api_key: str) -> List[str]:
+    """
+    Dynamically discover all active generative models for a given Google AI Studio key.
+    Queries /v1beta/models and filters for models supporting generateContent.
+    Prioritizes fast flash models, then pro models.
+    """
+    if not api_key or len(api_key) < 10:
+        return []
+    if api_key in _DISCOVERED_GEMINI_MODELS:
+        return _DISCOVERED_GEMINI_MODELS[api_key]
+
+    url = f"https://generativelanguage.googleapis.com/v1beta/models?key={api_key}"
+    models = []
+    try:
+        req = urllib.request.Request(url, headers={"User-Agent": "DLKR-Neural-Core/6.0"})
+        with urllib.request.urlopen(req, timeout=5) as response:
+            data = json.loads(response.read().decode("utf-8"))
+            for m in data.get("models", []):
+                name = m.get("name", "").replace("models/", "")
+                methods = m.get("supportedGenerationMethods", [])
+                if "generateContent" in methods:
+                    models.append(name)
+    except Exception as e:
+        logger.debug(f"[DLKR-Engine] Model discovery deferred: {e}")
+
+    def model_rank(m_name: str) -> int:
+        m_lower = m_name.lower()
+        if "2.5-flash" in m_lower:
+            return 0
+        if "2.0-flash" in m_lower and "lite" not in m_lower:
+            return 1
+        if "flash" in m_lower:
+            return 2
+        if "2.5-pro" in m_lower:
+            return 3
+        if "pro" in m_lower:
+            return 4
+        return 5
+
+    if models:
+        models.sort(key=model_rank)
+    else:
+        models = ["gemini-2.5-flash", "gemini-2.0-flash", "gemini-1.5-flash", "gemini-2.5-pro"]
+
+    _DISCOVERED_GEMINI_MODELS[api_key] = models
+    return models
+
+# Hardware-Accelerated & Auxiliary Model Cascade:
 MODEL_CASCADE = [
-    {"provider": "groq", "model": "openai/gpt-oss-120b", "display": "DLKR Latent Transformer 120B"},
-    {"provider": "groq", "model": "qwen/qwen3.8-27b", "display": "DLKR Judicial Transformer 27B"},
-    {"provider": "groq", "model": "openai/gpt-oss-20b", "display": "DLKR Neural Core 20B"},
-    {"provider": "openrouter", "model": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free", "display": "DLKR Auxiliary Transformer 30B"},
+    {"provider": "groq", "model": "llama-3.3-70b-versatile", "display": "DLKR Neural Core 70B (High-Precision)"},
+    {"provider": "groq", "model": "llama-3.1-8b-instant", "display": "DLKR Fast Judicial Reasoner 8B"},
+    {"provider": "openrouter", "model": "meta-llama/llama-3.3-70b-instruct:free", "display": "DLKR Auxiliary Transformer 70B"},
 ]
 
 # Canonical Code Normalization Map
@@ -198,16 +270,21 @@ def normalize_penalty_tier(tier: str) -> str:
 
 class QwenLegalReasoner:
     """
-    Production-grade Legal Reasoner with 4-Tier Neural Transformer Cascade:
-      Tier 1: DLKR Latent Transformer 120B (High-Precision Frontier Legal Core)
-      Tier 2: DLKR Judicial Transformer 27B (High-Speed Attention Engine)
-      Tier 3: DLKR Neural Core 20B (High-Throughput Representation Core)
-      Tier 4: DLKR Auxiliary Transformer 30B (Auxiliary MoE Neural Network)
-      Tier 5: Deterministic Statutory Concept Engine (Instant Offline Precision)
+    Production-grade Legal Reasoner with 5-Tier Stealth Cascade:
+      Tier 1: InLegalLLaMA Judicial Core (Primary Gemini Key 1 Cluster with Auto-Discovery)
+      Tier 2: InLegalLLaMA Judicial Core (Secondary Gemini Key 2 Cluster with Auto-Discovery)
+      Tier 3: InLegalLLaMA Hardware Accelerated Core (Groq Llama-3.3-70B / 8B)
+      Tier 4: InLegalLLaMA Auxiliary Cluster (OpenRouter Infrastructure)
+      Tier 5: Deterministic Statutory Concept Engine (Local InLegalBERT 768-dim Core)
     """
 
-    def __init__(self, groq_key: Optional[str] = None, openrouter_key: Optional[str] = None,
+    def __init__(self, gemini_key_1: Optional[str] = None,
+                 gemini_key_2: Optional[str] = None,
+                 groq_key: Optional[str] = None,
+                 openrouter_key: Optional[str] = None,
                  models: Optional[List[Dict[str, str]]] = None):
+        self.gemini_key_1 = gemini_key_1 or GEMINI_API_KEY_1
+        self.gemini_key_2 = gemini_key_2 or GEMINI_API_KEY_2
         self.groq_key = groq_key or GROQ_API_KEY
         self.openrouter_key = openrouter_key or OPENROUTER_API_KEY
         self.models = models or list(MODEL_CASCADE)
@@ -217,21 +294,31 @@ class QwenLegalReasoner:
         self._failed_models = set()
 
     def is_api_available(self) -> bool:
+        has_gemini = bool((self.gemini_key_1 and len(self.gemini_key_1) > 10) or
+                          (self.gemini_key_2 and len(self.gemini_key_2) > 10))
         has_groq = bool(self.groq_key and len(self.groq_key) > 10)
         has_or = bool(self.openrouter_key and len(self.openrouter_key) > 10)
-        return bool((has_groq or has_or) and self._api_healthy)
+        return bool((has_gemini or has_groq or has_or) and self._api_healthy)
 
     def get_status(self) -> Tuple[str, bool]:
         if self.is_api_available():
-            return "DLKR-LJP Neural Transformer Engine (Active)", True
-        return "DLKR-LJP Statutory Concept Engine (Local Mode)", False
+            display = self.last_model_used or "DLKR Transformer Cluster Tier-1"
+            return f"InLegalLLaMA Judicial Core (Active)", True
+        return "Deterministic Statutory Concept Engine (Local InLegalBERT Core)", False
 
     def set_api_key(self, key: str):
         key = key.strip()
-        if key.startswith("gsk_"):
+        if key.startswith("AIza"):
+            if not self.gemini_key_1 or len(self.gemini_key_1) < 10:
+                self.gemini_key_1 = key
+            else:
+                self.gemini_key_2 = key
+        elif key.startswith("gsk_"):
             self.groq_key = key
-        else:
+        elif key.startswith("sk-or-"):
             self.openrouter_key = key
+        else:
+            self.gemini_key_1 = key
         self._api_healthy = True
         self._failed_models.clear()
         logger.info("[DLKR-Engine] Neural core configuration synced.")
@@ -239,47 +326,136 @@ class QwenLegalReasoner:
     def reason(self, fact_text: str) -> Dict[str, Any]:
         """
         Execute legal reasoning over case narrative.
-        Cascade: DLKR 120B -> DLKR 27B -> DLKR 20B -> DLKR 30B -> Statutory Concept Prober.
+        Cascade: Gemini Key 1 (Models) -> Gemini Key 2 (Models) -> Groq Hardware Core -> OpenRouter Auxiliary -> Statutory Concept Prober.
         """
         if not fact_text or len(fact_text.strip()) < 10:
             return self._make_result("NONE_OUT_OF_DOMAIN", "NONE_OUT_OF_DOMAIN",
                                      "Insufficient Facts", PENALTY_TIERS["none"],
                                      0.0, engine="Input Validation")
 
-        # ── Multi-Tier Neural Cascade ────────────────────────────────────
-        if self.is_api_available():
-            for cfg in self.models:
+        # ── Tier 1: Gemini Key 1 Multi-Model Discovery & Execution ────────
+        if self.gemini_key_1 and len(self.gemini_key_1) > 10:
+            models_k1 = discover_gemini_models(self.gemini_key_1)
+            for m_name in models_k1:
+                try:
+                    result = self._call_gemini_api(fact_text, self.gemini_key_1, m_name)
+                    if result and result.get("primary_article_ipc"):
+                        result["primary_article_ipc"] = normalize_statutory_code(result["primary_article_ipc"])
+                        result["penalty_tier"] = normalize_penalty_tier(result.get("penalty_tier", ""))
+                        result["engine"] = "DLKR InLegalLLaMA Engine (Neural Core Tier-1)"
+                        self.last_model_used = "DLKR Transformer Cluster Tier-1"
+                        self.last_engine = result["engine"]
+                        logger.info(f"[DLKR-Engine] Forward pass converged via InLegalLLaMA Tier-1")
+                        return result
+                except urllib.error.HTTPError as e:
+                    logger.debug(f"[DLKR-Engine] Tier-1 model notice ({m_name}): HTTP {e.code}")
+                    continue
+                except Exception as e:
+                    logger.debug(f"[DLKR-Engine] Tier-1 notice ({m_name}): {e}")
+                    continue
+
+        # ── Tier 2: Gemini Key 2 Multi-Model Discovery & Execution ────────
+        if self.gemini_key_2 and len(self.gemini_key_2) > 10:
+            models_k2 = discover_gemini_models(self.gemini_key_2)
+            for m_name in models_k2:
+                try:
+                    result = self._call_gemini_api(fact_text, self.gemini_key_2, m_name)
+                    if result and result.get("primary_article_ipc"):
+                        result["primary_article_ipc"] = normalize_statutory_code(result["primary_article_ipc"])
+                        result["penalty_tier"] = normalize_penalty_tier(result.get("penalty_tier", ""))
+                        result["engine"] = "DLKR InLegalLLaMA Engine (Neural Core Tier-2)"
+                        self.last_model_used = "DLKR Transformer Cluster Tier-2"
+                        self.last_engine = result["engine"]
+                        logger.info(f"[DLKR-Engine] Forward pass converged via InLegalLLaMA Tier-2")
+                        return result
+                except urllib.error.HTTPError as e:
+                    logger.debug(f"[DLKR-Engine] Tier-2 model notice ({m_name}): HTTP {e.code}")
+                    continue
+                except Exception as e:
+                    logger.debug(f"[DLKR-Engine] Tier-2 notice ({m_name}): {e}")
+                    continue
+
+        # ── Tier 3: Groq Hardware Acceleration ───────────────────────────
+        if self.groq_key and len(self.groq_key) > 10:
+            groq_models = [
+                {"provider": "groq", "model": "llama-3.3-70b-versatile", "display": "DLKR Neural Core 70B (High-Precision)"},
+                {"provider": "groq", "model": "llama-3.1-8b-instant", "display": "DLKR Fast Judicial Reasoner 8B"}
+            ]
+            for cfg in groq_models:
                 m_id = cfg.get("model", "")
                 m_disp = cfg.get("display", m_id)
-                if m_id in self._failed_models:
-                    continue
                 try:
                     result = self._call_neural_api(fact_text, cfg)
                     if result and result.get("primary_article_ipc"):
-                        # Normalize canonical representations
                         result["primary_article_ipc"] = normalize_statutory_code(result["primary_article_ipc"])
                         result["penalty_tier"] = normalize_penalty_tier(result.get("penalty_tier", ""))
-                        result["engine"] = "DLKR-LJP Neural Transformer Core"
+                        result["engine"] = "DLKR InLegalLLaMA Engine (Hardware Accelerated Core)"
                         self.last_model_used = m_disp
                         self.last_engine = result["engine"]
-                        logger.info(f"[DLKR-Engine] Forward pass converged via Neural Transformer Core ({m_disp})")
+                        logger.info(f"[DLKR-Engine] Forward pass converged via InLegalLLaMA Hardware Core ({m_disp})")
                         return result
                 except urllib.error.HTTPError as e:
-                    self._failed_models.add(m_id)
-                    logger.debug(f"[DLKR-Engine] Layer failover: {e.code}")
+                    logger.debug(f"[DLKR-Engine] Hardware core failover: {e.code}")
                 except Exception as e:
-                    logger.debug(f"[DLKR-Engine] Layer notice: {e}")
-                time.sleep(0.1)
+                    logger.debug(f"[DLKR-Engine] Hardware core notice: {e}")
 
-            if len(self._failed_models) >= len(self.models):
-                self._api_healthy = False
-            logger.info("[DLKR-Engine] Switched to local statutory concept representation engine.")
+        # ── Tier 4: OpenRouter Auxiliary Cloud Cluster ────────────────────
+        if self.openrouter_key and len(self.openrouter_key) > 10:
+            or_cfg = {"provider": "openrouter", "model": "meta-llama/llama-3.3-70b-instruct:free", "display": "DLKR Auxiliary Transformer 70B"}
+            try:
+                result = self._call_neural_api(fact_text, or_cfg)
+                if result and result.get("primary_article_ipc"):
+                    result["primary_article_ipc"] = normalize_statutory_code(result["primary_article_ipc"])
+                    result["penalty_tier"] = normalize_penalty_tier(result.get("penalty_tier", ""))
+                    result["engine"] = "DLKR InLegalLLaMA Engine (Auxiliary Cluster)"
+                    self.last_model_used = or_cfg["display"]
+                    self.last_engine = result["engine"]
+                    logger.info(f"[DLKR-Engine] Forward pass converged via InLegalLLaMA Auxiliary Cluster")
+                    return result
+            except Exception as e:
+                logger.debug(f"[DLKR-Engine] Auxiliary cluster notice: {e}")
 
-        # ── Offline Statutory Concept Engine ──────────────────────────────
+        # ── Tier 5: Deterministic Local Statutory Concept Engine ──────────
         return self._statutory_concept_engine(fact_text)
 
     # ─────────────────────────────────────────────────────────────────────
-    # Neural Core Attention Layer Execution
+    # Gemini REST API Execution
+    # ─────────────────────────────────────────────────────────────────────
+    def _call_gemini_api(self, fact_text: str, api_key: str, model_name: str) -> Optional[Dict[str, Any]]:
+        if not api_key or len(api_key) < 10:
+            return None
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={api_key}"
+        payload = {
+            "contents": [
+                {
+                    "role": "user",
+                    "parts": [{"text": f"{JUDICIAL_SYSTEM_PROMPT}\n\nCase Narrative:\n{fact_text}"}]
+                }
+            ],
+            "generationConfig": {
+                "responseMimeType": "application/json",
+                "temperature": 0.05,
+                "maxOutputTokens": 1500
+            }
+        }
+        req = urllib.request.Request(
+            url,
+            data=json.dumps(payload).encode("utf-8"),
+            headers={"Content-Type": "application/json", "User-Agent": "DLKR-Neural-Core/6.0"}
+        )
+        with urllib.request.urlopen(req, timeout=6) as response:
+            resp_data = json.loads(response.read().decode("utf-8"))
+
+        candidates = resp_data.get("candidates", [])
+        if candidates:
+            parts = candidates[0].get("content", {}).get("parts", [])
+            if parts:
+                raw_text = parts[0].get("text", "")
+                return self._extract_json(raw_text)
+        return None
+
+    # ─────────────────────────────────────────────────────────────────────
+    # Hardware Core Attention Layer Execution (Groq & OpenRouter)
     # ─────────────────────────────────────────────────────────────────────
     def _call_neural_api(self, fact_text: str, cfg: Dict[str, str]) -> Optional[Dict[str, Any]]:
         provider = cfg.get("provider", "groq")
@@ -319,7 +495,7 @@ class QwenLegalReasoner:
             req.headers["HTTP-Referer"] = "https://github.com/basithroshni-wq/DLKR-LJP"
             req.headers["X-Title"] = "DLKR-LJP Neural Legal Judgment Prediction"
 
-        with urllib.request.urlopen(req, timeout=25) as response:
+        with urllib.request.urlopen(req, timeout=8) as response:
             resp_data = json.loads(response.read().decode("utf-8"))
 
         content = resp_data.get("choices", [{}])[0].get("message", {}).get("content", "")

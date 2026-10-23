@@ -8,9 +8,16 @@ using Cost-Sensitive Asymmetric Loss. Fast, reproducible, and zero-OOM.
 """
 
 import sys
+import os
 import random
 import logging
 from pathlib import Path
+
+# Ensure project root is in sys.path
+_ROOT = Path(__file__).resolve().parent.parent
+if str(_ROOT) not in sys.path:
+    sys.path.insert(0, str(_ROOT))
+
 from typing import List, Dict, Any, Optional
 
 try:

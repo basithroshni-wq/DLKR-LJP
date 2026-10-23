@@ -43,8 +43,9 @@ OPENAI_API_BASE = os.environ.get("OPENAI_API_BASE", "")
 OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY", "")
 GROQ_API_KEY = os.environ.get("GROQ_API_KEY", "")
 OPENROUTER_API_KEY = os.environ.get("OPENROUTER_API_KEY", "")
-QWEN_API_KEY = os.environ.get("QWEN_API_KEY", "")
-GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "")
+GEMINI_API_KEY_1 = os.environ.get("GEMINI_API_KEY_1", os.environ.get("GEMINI_API_KEY", ""))
+GEMINI_API_KEY_2 = os.environ.get("GEMINI_API_KEY_2", "")
+GEMINI_API_KEY = GEMINI_API_KEY_1
 
 # Statutory Temporal Cutoff: Bharatiya Nyaya Sanhita (BNS) came into force on July 1, 2024
 BNS_EFFECTIVE_DATE = datetime.date(2024, 7, 1)
