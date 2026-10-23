@@ -5007,16 +5007,43 @@ def process_case(fact_text: str, engine_mode: str = "🚀 InLegalLLaMA Dual-Engi
 
 
 # Optional Gradio Dashboard Builder
+def _patch_gradio_compatibility(gr_module):
+    """
+    Self-healing polyfill for Gradio 4.x / 5.x / 6.x environment anomalies (e.g. Kaggle Python 3.13).
+    Ensures gradio.components has 'Component' attribute so Block.render() never crashes.
+    """
+    if gr_module is None:
+        return
+    try:
+        import gradio.components as g_comp
+        if not hasattr(g_comp, "Component"):
+            comp_cls = getattr(gr_module, "Component", None)
+            if comp_cls is None:
+                try:
+                    from gradio.components.base import Component as comp_cls
+                except Exception:
+                    try:
+                        from gradio.component_meta import Component as comp_cls
+                    except Exception:
+                        class comp_cls:
+                            pass
+            g_comp.Component = comp_cls
+    except Exception:
+        pass
+
+
 try:
     import gradio as gr
     HAS_GRADIO = True
+    _patch_gradio_compatibility(gr)
 except ImportError:
     HAS_GRADIO = False
     gr = None
 
 def build_gradio_dashboard():
-    if not HAS_GRADIO:
+    if not HAS_GRADIO or gr is None:
         return None
+    _patch_gradio_compatibility(gr)
     theme = gr.themes.Soft(primary_hue="indigo", neutral_hue="slate")
     active_status, is_api_active = get_active_llm_status()
     badge_icon = "🟢" if is_api_active else "🟡"
