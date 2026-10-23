@@ -1,0 +1,1030 @@
+"""
+========================================================================================
+DLKR-LJP 40-Statute Closed Scope Knowledge Base Generator
+========================================================================================
+Authoritative dual-code statutory registry (IPC 1860 & BNS 2023) covering 40 sections
+with statutory difference notes, sentencing guidelines, and procedural parameters.
+========================================================================================
+"""
+
+import json
+import csv
+from pathlib import Path
+
+DATA_DIR = Path(__file__).resolve().parent
+
+STATUTES_40 = {
+    # ── A. Homicide & Bodily Injury (13 Articles) ─────────────────────────────
+    "IPC_302_BNS_103": {
+        "article_code": "IPC_302_BNS_103",
+        "ipc_section": "Section 302 IPC",
+        "bns_section": "Section 103(1) BNS",
+        "title": "Punishment for Murder",
+        "category": "Homicide & Fatal Offences",
+        "charge": "Murder / Premeditated Intentional Homicide",
+        "penalty_tier": "Tier 4: Life Imprisonment / Capital Sentence (Heinous Offence)",
+        "punishment_ipc": "Death, or Imprisonment for Life, and fine",
+        "punishment_bns": "Death, or Imprisonment for Life, and fine",
+        "statutory_delta": "Substantively identical definitions; BNS 103(2) separately introduces mob lynching by 5+ persons with death or life imprisonment.",
+        "max_imprisonment_years": 99,
+        "is_cognizable": True,
+        "is_bailable": False,
+        "triable_by": "Court of Session",
+        "compoundable": False,
+        "confusable_group": "HOMICIDE_CLUSTER",
+        "essential_elements": [
+            "Intention of causing death (s.300 cl. 1)",
+            "Intention of causing bodily injury sufficient in ordinary course of nature to cause death (s.300 cl. 3)",
+            "Knowledge that act is imminently dangerous that it must in all probability cause death (s.300 cl. 4)",
+            "Absence of all five statutory exceptions to Section 300 (premeditated assault, ambush, poison)"
+        ],
+        "statutory_exceptions": ["Exception 1", "Exception 2", "Exception 3", "Exception 4", "Exception 5"]
+    },
+    "IPC_304_PART1_BNS_105": {
+        "article_code": "IPC_304_PART1_BNS_105",
+        "ipc_section": "Section 304 Part I IPC",
+        "bns_section": "Section 105 BNS",
+        "title": "Culpable Homicide Not Amounting to Murder (With Intention)",
+        "category": "Homicide & Fatal Offences",
+        "charge": "Culpable Homicide Not Amounting to Murder (Mitigated by Exception)",
+        "penalty_tier": "Tier 4: Life Imprisonment / Capital Sentence (Heinous Offence)",
+        "punishment_ipc": "Imprisonment for Life, or imprisonment up to 10 years, and fine",
+        "punishment_bns": "Imprisonment for Life, or imprisonment up to 10 years, and fine",
+        "statutory_delta": "BNS Section 105 replaces IPC 304; maintains distinction between intentional act under exception and act with knowledge only.",
+        "max_imprisonment_years": 20,
+        "is_cognizable": True,
+        "is_bailable": False,
+        "triable_by": "Court of Session",
+        "compoundable": False,
+        "confusable_group": "HOMICIDE_CLUSTER",
+        "essential_elements": [
+            "Act done with intention of causing death or bodily injury likely to cause death",
+            "Mitigated by grave and sudden provocation (Exception 1) or exceeding right of private defence (Exception 2)"
+        ],
+        "statutory_exceptions": []
+    },
+    "IPC_304_PART2_BNS_105": {
+        "article_code": "IPC_304_PART2_BNS_105",
+        "ipc_section": "Section 304 Part II IPC",
+        "bns_section": "Section 105 BNS",
+        "title": "Culpable Homicide Not Amounting to Murder (Sudden Fight / Knowledge Only)",
+        "category": "Homicide & Fatal Offences",
+        "charge": "Culpable Homicide (Sudden Fight Exception 4 / Knowledge Without Intention)",
+        "penalty_tier": "Tier 3: 7 to 10 Years (Serious Offence / Substantial Imprisonment)",
+        "punishment_ipc": "Imprisonment up to 10 years, or fine, or both",
+        "punishment_bns": "Imprisonment up to 10 years, or fine, or both",
+        "statutory_delta": "Applied when fatality occurs in sudden quarrel without premeditation in heat of passion (Exception 4 to s.300).",
+        "max_imprisonment_years": 10,
+        "is_cognizable": True,
+        "is_bailable": False,
+        "triable_by": "Court of Session",
+        "compoundable": False,
+        "confusable_group": "HOMICIDE_CLUSTER",
+        "essential_elements": [
+            "Act done with knowledge that it is likely to cause death",
+            "Done WITHOUT intention to cause death or cause fatal bodily injury",
+            "Sudden quarrel, heat of passion, mutual scuffle without offender taking undue advantage"
+        ],
+        "statutory_exceptions": ["Exception 4 to Section 300"]
+    },
+    "IPC_304A_BNS_106": {
+        "article_code": "IPC_304A_BNS_106",
+        "ipc_section": "Section 304A IPC",
+        "bns_section": "Section 106(1) BNS",
+        "title": "Causing Death by Negligence (Rash Driving / Negligent Act)",
+        "category": "Homicide & Fatal Offences",
+        "charge": "Death by Rash and Negligent Act (Vehicular / Industrial)",
+        "penalty_tier": "Tier 2: 3 to 7 Years (Arnesh Kumar Threshold / Medium Penalty)",
+        "punishment_ipc": "Imprisonment up to 2 years, or fine, or both",
+        "punishment_bns": "Imprisonment up to 5 years, and fine (BNS 106(1)); up to 10 years for hit-and-run without reporting (BNS 106(2))",
+        "statutory_delta": "CRITICAL DIFFERENCE: BNS 106(1) increased maximum imprisonment from 2 years under IPC to 5 years. Hit-and-run under 106(2) carries up to 10 years.",
+        "max_imprisonment_years": 5,
+        "is_cognizable": True,
+        "is_bailable": True,
+        "triable_by": "Magistrate of the First Class",
+        "compoundable": False,
+        "confusable_group": "HOMICIDE_CLUSTER",
+        "essential_elements": [
+            "Death of victim caused directly by act of accused",
+            "Act done rashly or negligently without criminal intention or knowledge of inevitable death",
+            "Absence of mens rea to cause bodily injury"
+        ],
+        "statutory_exceptions": []
+    },
+    "IPC_304B_BNS_80": {
+        "article_code": "IPC_304B_BNS_80",
+        "ipc_section": "Section 304B IPC",
+        "bns_section": "Section 80 BNS",
+        "title": "Dowry Death",
+        "category": "Matrimonial & Gender Offences",
+        "charge": "Dowry Death / Cruelty Preceding Unnatural Death",
+        "penalty_tier": "Tier 4: Life Imprisonment / Capital Sentence (Heinous Offence)",
+        "punishment_ipc": "Rigorous imprisonment not less than 7 years, up to Life Imprisonment",
+        "punishment_bns": "Rigorous imprisonment not less than 7 years, up to Life Imprisonment",
+        "statutory_delta": "Re-enacted verbatim as BNS Section 80; presumption of dowry death under Section 113B Evidence Act / Section 118 BSA applies.",
+        "max_imprisonment_years": 99,
+        "is_cognizable": True,
+        "is_bailable": False,
+        "triable_by": "Court of Session",
+        "compoundable": False,
+        "confusable_group": "DOMESTIC_CRUELTY_CLUSTER",
+        "essential_elements": [
+            "Death of woman occurs within 7 years of marriage",
+            "Death occurs otherwise than under normal circumstances (burns, poison, asphyxia)",
+            "Shown that soon before death she was subjected to cruelty or harassment by husband or in-laws in connection with dowry demands"
+        ],
+        "statutory_exceptions": []
+    },
+    "IPC_307_BNS_109": {
+        "article_code": "IPC_307_BNS_109",
+        "ipc_section": "Section 307 IPC",
+        "bns_section": "Section 109 BNS",
+        "title": "Attempt to Murder",
+        "category": "Homicide & Fatal Offences",
+        "charge": "Attempt to Murder",
+        "penalty_tier": "Tier 4: Life Imprisonment / Capital Sentence (Heinous Offence)",
+        "punishment_ipc": "Imprisonment up to 10 years, and fine; if hurt caused, up to Life Imprisonment",
+        "punishment_bns": "Imprisonment up to 10 years, and fine; if hurt caused, up to Life Imprisonment",
+        "statutory_delta": "Substantively identical; requires overt execution step towards murder where victim survives due to intervention or medical care.",
+        "max_imprisonment_years": 99,
+        "is_cognizable": True,
+        "is_bailable": False,
+        "triable_by": "Court of Session",
+        "compoundable": False,
+        "confusable_group": "HOMICIDE_CLUSTER",
+        "essential_elements": [
+            "Act done with such intention or knowledge and under such circumstances that if death had been caused, accused would be guilty of murder",
+            "Execution of overt act towards commission",
+            "Victim survived assault"
+        ],
+        "statutory_exceptions": []
+    },
+    "IPC_308_BNS_110": {
+        "article_code": "IPC_308_BNS_110",
+        "ipc_section": "Section 308 IPC",
+        "bns_section": "Section 110 BNS",
+        "title": "Attempt to Commit Culpable Homicide",
+        "category": "Homicide & Fatal Offences",
+        "charge": "Attempt to Commit Culpable Homicide",
+        "penalty_tier": "Tier 2: 3 to 7 Years (Arnesh Kumar Threshold / Medium Penalty)",
+        "punishment_ipc": "Imprisonment up to 3 years, or fine, or both; if hurt caused, up to 7 years",
+        "punishment_bns": "Imprisonment up to 3 years, or fine, or both; if hurt caused, up to 7 years",
+        "statutory_delta": "Applied when attempted lethal strike occurred under sudden provocation or sudden quarrel where, if death had occurred, it would be s.304.",
+        "max_imprisonment_years": 7,
+        "is_cognizable": True,
+        "is_bailable": True,
+        "triable_by": "Court of Session",
+        "compoundable": False,
+        "confusable_group": "HOMICIDE_CLUSTER",
+        "essential_elements": [
+            "Act done under circumstances that if death caused, would be culpable homicide not amounting to murder",
+            "Absence of premeditated intention to murder"
+        ],
+        "statutory_exceptions": []
+    },
+    "IPC_323_BNS_115": {
+        "article_code": "IPC_323_BNS_115",
+        "ipc_section": "Section 323 IPC",
+        "bns_section": "Section 115(2) BNS",
+        "title": "Punishment for Voluntarily Causing Hurt (Unarmed)",
+        "category": "Bodily Hurt & Physical Assault",
+        "charge": "Voluntarily Causing Simple Hurt (Unarmed Assault)",
+        "penalty_tier": "Tier 1: Up to 3 Years (Minor / Summary Offence)",
+        "punishment_ipc": "Imprisonment up to 1 year, or fine up to ₹1,000, or both",
+        "punishment_bns": "Imprisonment up to 1 year, or fine up to ₹1,000, or both, or community service",
+        "statutory_delta": "BNS Section 115(2) adds community service as an alternative judicial penalty for petty unarmed hurt.",
+        "max_imprisonment_years": 1,
+        "is_cognizable": False,
+        "is_bailable": True,
+        "triable_by": "Any Magistrate",
+        "compoundable": True,
+        "confusable_group": "HURT_CLUSTER",
+        "essential_elements": [
+            "Voluntary causation of bodily pain, disease, or infirmity to any person",
+            "Inflicted without dangerous weapon",
+            "Injuries are simple (bruises, slaps, scratches) without fractures"
+        ],
+        "statutory_exceptions": []
+    },
+    "IPC_324_BNS_118_1": {
+        "article_code": "IPC_324_BNS_118_1",
+        "ipc_section": "Section 324 IPC",
+        "bns_section": "Section 118(1) BNS",
+        "title": "Voluntarily Causing Hurt by Dangerous Weapons or Means",
+        "category": "Bodily Hurt & Physical Assault",
+        "charge": "Voluntarily Causing Simple Hurt by Dangerous Weapon",
+        "penalty_tier": "Tier 1: Up to 3 Years (Minor / Summary Offence)",
+        "punishment_ipc": "Imprisonment up to 3 years, or fine, or both",
+        "punishment_bns": "Imprisonment up to 3 years, or fine, or both",
+        "statutory_delta": "Re-enacted under BNS 118(1); distinguishes simple cuts/incisions with knife from grievous fractures under 118(2).",
+        "max_imprisonment_years": 3,
+        "is_cognizable": True,
+        "is_bailable": False,
+        "triable_by": "Magistrate of the First Class",
+        "compoundable": False,
+        "confusable_group": "HURT_CLUSTER",
+        "essential_elements": [
+            "Voluntarily causing hurt",
+            "Inflicted by instrument for shooting, stabbing, cutting, or weapon used offensively",
+            "Injury is simple (stitches, superficial knife cuts) without permanent disfigurement"
+        ],
+        "statutory_exceptions": []
+    },
+    "IPC_325_BNS_117_2": {
+        "article_code": "IPC_325_BNS_117_2",
+        "ipc_section": "Section 325 IPC",
+        "bns_section": "Section 117(2) BNS",
+        "title": "Punishment for Voluntarily Causing Grievous Hurt (Unarmed)",
+        "category": "Bodily Hurt & Physical Assault",
+        "charge": "Voluntarily Causing Grievous Hurt (Bone Fracture / Unarmed)",
+        "penalty_tier": "Tier 2: 3 to 7 Years (Arnesh Kumar Threshold / Medium Penalty)",
+        "punishment_ipc": "Imprisonment up to 7 years, and fine",
+        "punishment_bns": "Imprisonment up to 7 years, and fine",
+        "statutory_delta": "Requires proof of any of the 8 clauses of grievous hurt (e.g., bone fracture, loss of sight/hearing, 20 days severe pain).",
+        "max_imprisonment_years": 7,
+        "is_cognizable": True,
+        "is_bailable": True,
+        "triable_by": "Magistrate of the First Class",
+        "compoundable": True,
+        "confusable_group": "HURT_CLUSTER",
+        "essential_elements": [
+            "Voluntarily causing hurt satisfying definition of grievous hurt (s.320 IPC / s.116 BNS)",
+            "Fracture or dislocation of bone or tooth, or permanent privation of member",
+            "Caused without dangerous weapons (punches, kicking, blunt stick)"
+        ],
+        "statutory_exceptions": []
+    },
+    "IPC_326_BNS_118_2": {
+        "article_code": "IPC_326_BNS_118_2",
+        "ipc_section": "Section 326 IPC",
+        "bns_section": "Section 118(2) BNS",
+        "title": "Voluntarily Causing Grievous Hurt by Dangerous Weapons or Means",
+        "category": "Bodily Hurt & Physical Assault",
+        "charge": "Voluntarily Causing Grievous Hurt by Dangerous Weapons",
+        "penalty_tier": "Tier 4: Life Imprisonment / Capital Sentence (Heinous Offence)",
+        "punishment_ipc": "Imprisonment for Life, or imprisonment up to 10 years, and fine",
+        "punishment_bns": "Imprisonment for Life, or imprisonment up to 10 years, and fine",
+        "statutory_delta": "Substantively identical; severe penal consequence for iron rod fractures, sword amputations, or acid attacks.",
+        "max_imprisonment_years": 99,
+        "is_cognizable": True,
+        "is_bailable": False,
+        "triable_by": "Magistrate of the First Class",
+        "compoundable": False,
+        "confusable_group": "HURT_CLUSTER",
+        "essential_elements": [
+            "Voluntarily causing grievous hurt (fracture, severe organ damage)",
+            "Inflicted by instrument for stabbing, cutting, firearm, or corrosive substance"
+        ],
+        "statutory_exceptions": []
+    },
+    "IPC_341_BNS_126_2": {
+        "article_code": "IPC_341_BNS_126_2",
+        "ipc_section": "Section 341 IPC",
+        "bns_section": "Section 126(2) BNS",
+        "title": "Punishment for Wrongful Restraint",
+        "category": "Restraint & Confinement",
+        "charge": "Wrongful Restraint (Blocking Passage in Particular Direction)",
+        "penalty_tier": "Tier 1: Up to 3 Years (Minor / Summary Offence)",
+        "punishment_ipc": "Simple imprisonment up to 1 month, or fine up to ₹500, or both",
+        "punishment_bns": "Simple imprisonment up to 1 month, or fine up to ₹5,000, or both, or community service",
+        "statutory_delta": "BNS Section 126(2) increased fine tenfold from ₹500 to ₹5,000 and introduced community service.",
+        "max_imprisonment_years": 1,
+        "is_cognizable": True,
+        "is_bailable": True,
+        "triable_by": "Any Magistrate",
+        "compoundable": True,
+        "confusable_group": "RESTRAINT_CLUSTER",
+        "essential_elements": [
+            "Voluntarily obstructing any person",
+            "Preventing that person from proceeding in any direction in which that person has a right to proceed"
+        ],
+        "statutory_exceptions": []
+    },
+    "IPC_342_BNS_127_2": {
+        "article_code": "IPC_342_BNS_127_2",
+        "ipc_section": "Section 342 IPC",
+        "bns_section": "Section 127(2) BNS",
+        "title": "Punishment for Wrongful Confinement",
+        "category": "Restraint & Confinement",
+        "charge": "Wrongful Confinement (Locking within Circumscribing Limits)",
+        "penalty_tier": "Tier 1: Up to 3 Years (Minor / Summary Offence)",
+        "punishment_ipc": "Imprisonment up to 1 year, or fine up to ₹1,000, or both",
+        "punishment_bns": "Imprisonment up to 1 year, or fine up to ₹5,000, or both",
+        "statutory_delta": "BNS increased fine ceiling to ₹5,000; total restraint within a room or bounded perimeter.",
+        "max_imprisonment_years": 1,
+        "is_cognizable": True,
+        "is_bailable": True,
+        "triable_by": "Any Magistrate",
+        "compoundable": True,
+        "confusable_group": "RESTRAINT_CLUSTER",
+        "essential_elements": [
+            "Wrongfully restraining a person in such a manner as to prevent that person from proceeding beyond certain circumscribing limits",
+            "Complete confinement within room, shed, or building"
+        ],
+        "statutory_exceptions": []
+    },
+
+    # ── B. Sexual & Matrimonial Offences (6 Articles) ─────────────────────────
+    "IPC_376_BNS_64": {
+        "article_code": "IPC_376_BNS_64",
+        "ipc_section": "Section 376(1) IPC",
+        "bns_section": "Section 64(1) BNS",
+        "title": "Punishment for Rape",
+        "category": "Sexual Offences",
+        "charge": "Rape / Aggravated Sexual Assault",
+        "penalty_tier": "Tier 4: Life Imprisonment / Capital Sentence (Heinous Offence)",
+        "punishment_ipc": "Rigorous imprisonment not less than 7 years, up to Life Imprisonment, and fine",
+        "punishment_bns": "Rigorous imprisonment not less than 10 years, up to Life Imprisonment, and fine",
+        "statutory_delta": "CRITICAL DIFFERENCE: BNS Section 64(1) raised the MINIMUM statutory sentence from 7 years under IPC to 10 years.",
+        "max_imprisonment_years": 99,
+        "is_cognizable": True,
+        "is_bailable": False,
+        "triable_by": "Court of Session",
+        "compoundable": False,
+        "confusable_group": "SEXUAL_OFFENCES_CLUSTER",
+        "essential_elements": [
+            "Penetrative sexual act without consent or against will",
+            "Absence of genuine free consent under Section 375 IPC / Section 63 BNS"
+        ],
+        "statutory_exceptions": []
+    },
+    "IPC_376D_BNS_70": {
+        "article_code": "IPC_376D_BNS_70",
+        "ipc_section": "Section 376D IPC",
+        "bns_section": "Section 70(1) BNS",
+        "title": "Gang Rape",
+        "category": "Sexual Offences",
+        "charge": "Gang Rape (Multiple Perpetrators Acting in Furtherance)",
+        "penalty_tier": "Tier 4: Life Imprisonment / Capital Sentence (Heinous Offence)",
+        "punishment_ipc": "Rigorous imprisonment not less than 20 years, up to Life (remainder of natural life), and fine",
+        "punishment_bns": "Rigorous imprisonment not less than 20 years, up to Life (remainder of natural life), and fine",
+        "statutory_delta": "Re-enacted in BNS Section 70(1); life imprisonment strictly means remainder of natural life.",
+        "max_imprisonment_years": 99,
+        "is_cognizable": True,
+        "is_bailable": False,
+        "triable_by": "Court of Session",
+        "compoundable": False,
+        "confusable_group": "SEXUAL_OFFENCES_CLUSTER",
+        "essential_elements": [
+            "Rape committed by one or more persons constituting a group or acting in furtherance of a common intention",
+            "Each person in the group deemed guilty of gang rape"
+        ],
+        "statutory_exceptions": []
+    },
+    "IPC_354_BNS_74": {
+        "article_code": "IPC_354_BNS_74",
+        "ipc_section": "Section 354 IPC",
+        "bns_section": "Section 74 BNS",
+        "title": "Assault or Criminal Force to Woman with Intent to Outrage Modesty",
+        "category": "Sexual & Modesty Offences",
+        "charge": "Assault or Criminal Force to Outrage Modesty of Woman",
+        "penalty_tier": "Tier 2: 3 to 7 Years (Arnesh Kumar Threshold / Medium Penalty)",
+        "punishment_ipc": "Imprisonment not less than 1 year, up to 5 years, and fine",
+        "punishment_bns": "Imprisonment not less than 1 year, up to 5 years, and fine",
+        "statutory_delta": "Substantively identical; requires physical assault or physical force with intent or knowledge to outrage modesty.",
+        "max_imprisonment_years": 5,
+        "is_cognizable": True,
+        "is_bailable": False,
+        "triable_by": "Any Magistrate",
+        "compoundable": False,
+        "confusable_group": "MODESTY_CLUSTER",
+        "essential_elements": [
+            "Assault or use of criminal force to any woman",
+            "Intention to outrage or knowledge that it will likely outrage her modesty"
+        ],
+        "statutory_exceptions": []
+    },
+    "IPC_354A_BNS_75": {
+        "article_code": "IPC_354A_BNS_75",
+        "ipc_section": "Section 354A IPC",
+        "bns_section": "Section 75 BNS",
+        "title": "Sexual Harassment",
+        "category": "Sexual & Modesty Offences",
+        "charge": "Sexual Harassment (Unwelcome Sexual Advances / Remarks)",
+        "penalty_tier": "Tier 1: Up to 3 Years (Minor / Summary Offence)",
+        "punishment_ipc": "Rigorous imprisonment up to 3 years, or fine, or both (physical contact); up to 1 year for sexually colored remarks",
+        "punishment_bns": "Rigorous imprisonment up to 3 years, or fine, or both (physical contact); up to 1 year for sexually colored remarks",
+        "statutory_delta": "Covered under BNS Section 75; distinguishes verbal/unwelcome overtures from physical force under s.74.",
+        "max_imprisonment_years": 3,
+        "is_cognizable": True,
+        "is_bailable": True,
+        "triable_by": "Any Magistrate",
+        "compoundable": False,
+        "confusable_group": "MODESTY_CLUSTER",
+        "essential_elements": [
+            "Physical contact and advances involving unwelcome and explicit sexual overtures, or demand for sexual favors, or sexually colored remarks",
+            "Without physical restraint or aggravated assault"
+        ],
+        "statutory_exceptions": []
+    },
+    "IPC_354D_BNS_78": {
+        "article_code": "IPC_354D_BNS_78",
+        "ipc_section": "Section 354D IPC",
+        "bns_section": "Section 78 BNS",
+        "title": "Stalking",
+        "category": "Sexual & Modesty Offences",
+        "charge": "Stalking (Physical Following or Electronic Surveillance)",
+        "penalty_tier": "Tier 2: 3 to 7 Years (Arnesh Kumar Threshold / Medium Penalty)",
+        "punishment_ipc": "First conviction: up to 3 years and fine; Second/subsequent conviction: up to 5 years and fine",
+        "punishment_bns": "First conviction: up to 3 years and fine; Second/subsequent conviction: up to 5 years and fine",
+        "statutory_delta": "Re-enacted in BNS Section 78; covers both physical pursuit and monitoring woman's email, social media, or phone use.",
+        "max_imprisonment_years": 5,
+        "is_cognizable": True,
+        "is_bailable": True,
+        "triable_by": "Any Magistrate",
+        "compoundable": False,
+        "confusable_group": "MODESTY_CLUSTER",
+        "essential_elements": [
+            "Following a woman and contacting or attempting to contact such woman repeatedly despite clear indication of disinterest",
+            "Or monitoring use by woman of internet, email, or any other form of electronic communication"
+        ],
+        "statutory_exceptions": []
+    },
+    "IPC_498A_BNS_85": {
+        "article_code": "IPC_498A_BNS_85",
+        "ipc_section": "Section 498A IPC",
+        "bns_section": "Section 85 BNS",
+        "title": "Husband or Relative of Husband Subjecting Woman to Cruelty",
+        "category": "Matrimonial & Gender Offences",
+        "charge": "Matrimonial Cruelty / Domestic Harassment",
+        "penalty_tier": "Tier 1: Up to 3 Years (Minor / Summary Offence)",
+        "punishment_ipc": "Imprisonment up to 3 years, and fine",
+        "punishment_bns": "Imprisonment up to 3 years, and fine",
+        "statutory_delta": "Re-enacted in BNS Section 85; Arnesh Kumar guidelines mandatory for arrest without Section 41A notice.",
+        "max_imprisonment_years": 3,
+        "is_cognizable": True,
+        "is_bailable": False,
+        "triable_by": "Magistrate of the First Class",
+        "compoundable": False,
+        "confusable_group": "DOMESTIC_CRUELTY_CLUSTER",
+        "essential_elements": [
+            "Woman subjected to cruelty by husband or relative of husband",
+            "Willful conduct driving woman to suicide or grave danger to life, limb, or health",
+            "Or harassment with a view to coercing her or relatives to meet unlawful property demands"
+        ],
+        "statutory_exceptions": []
+    },
+
+    # ── C. Property, Theft, Robbery & Fraud (11 Articles) ─────────────────────
+    "IPC_379_BNS_303": {
+        "article_code": "IPC_379_BNS_303",
+        "ipc_section": "Section 379 IPC",
+        "bns_section": "Section 303(2) BNS",
+        "title": "Punishment for Theft",
+        "category": "Property Offences",
+        "charge": "Theft of Movable Property (Dishonest Taking)",
+        "penalty_tier": "Tier 1: Up to 3 Years (Minor / Summary Offence)",
+        "punishment_ipc": "Imprisonment up to 3 years, or fine, or both",
+        "punishment_bns": "Imprisonment up to 3 years, or fine, or both; first-time theft under ₹5,000 carries community service upon return of property",
+        "statutory_delta": "BNS Section 303(2) introduces community service for petty theft under ₹5,000 if offender has no prior convictions.",
+        "max_imprisonment_years": 3,
+        "is_cognizable": True,
+        "is_bailable": False,
+        "triable_by": "Any Magistrate",
+        "compoundable": True,
+        "confusable_group": "PROPERTY_THEFT_CLUSTER",
+        "essential_elements": [
+            "Dishonest intention to take movable property",
+            "Property taken out of possession of any person without consent",
+            "Movable property moved in order to such taking",
+            "Absence of force, threat of force, or house trespass"
+        ],
+        "statutory_exceptions": []
+    },
+    "IPC_380_BNS_305": {
+        "article_code": "IPC_380_BNS_305",
+        "ipc_section": "Section 380 IPC",
+        "bns_section": "Section 305 BNS",
+        "title": "Theft in Dwelling House, etc.",
+        "category": "Property Offences",
+        "charge": "Theft in Residential Building / Vessel / Tent",
+        "penalty_tier": "Tier 2: 3 to 7 Years (Arnesh Kumar Threshold / Medium Penalty)",
+        "punishment_ipc": "Imprisonment up to 7 years, and fine",
+        "punishment_bns": "Imprisonment up to 7 years, and fine",
+        "statutory_delta": "BNS Section 305 merges dwelling house and vessel theft; carries aggravated 7-year ceiling compared to simple theft.",
+        "max_imprisonment_years": 7,
+        "is_cognizable": True,
+        "is_bailable": False,
+        "triable_by": "Any Magistrate",
+        "compoundable": False,
+        "confusable_group": "PROPERTY_THEFT_CLUSTER",
+        "essential_elements": [
+            "Commission of theft as defined in s.378 IPC / s.303 BNS",
+            "Committed in any building, tent, or vessel used as a human dwelling or for custody of property"
+        ],
+        "statutory_exceptions": []
+    },
+    "IPC_381_BNS_306": {
+        "article_code": "IPC_381_BNS_306",
+        "ipc_section": "Section 381 IPC",
+        "bns_section": "Section 306 BNS",
+        "title": "Theft by Clerk or Servant of Property in Possession of Master",
+        "category": "Property Offences",
+        "charge": "Theft by Employee / Domestic Servant",
+        "penalty_tier": "Tier 2: 3 to 7 Years (Arnesh Kumar Threshold / Medium Penalty)",
+        "punishment_ipc": "Imprisonment up to 7 years, and fine",
+        "punishment_bns": "Imprisonment up to 7 years, and fine",
+        "statutory_delta": "Aggravated theft by employee or domestic help in possession of employer's goods.",
+        "max_imprisonment_years": 7,
+        "is_cognizable": True,
+        "is_bailable": False,
+        "triable_by": "Magistrate of the First Class",
+        "compoundable": False,
+        "confusable_group": "PROPERTY_THEFT_CLUSTER",
+        "essential_elements": [
+            "Theft committed by person employed as clerk or servant",
+            "Property belonging to or in possession of employer"
+        ],
+        "statutory_exceptions": []
+    },
+    "IPC_384_BNS_308_2": {
+        "article_code": "IPC_384_BNS_308_2",
+        "ipc_section": "Section 384 IPC",
+        "bns_section": "Section 308(2) BNS",
+        "title": "Punishment for Extortion",
+        "category": "Property Offences",
+        "charge": "Extortion (Delivery of Property Induced by Fear)",
+        "penalty_tier": "Tier 1: Up to 3 Years (Minor / Summary Offence)",
+        "punishment_ipc": "Imprisonment up to 3 years, or fine, or both",
+        "punishment_bns": "Imprisonment up to 3 years, or fine, or both",
+        "statutory_delta": "Re-enacted under BNS Section 308(2); victim intentionally put in fear of injury and induced to deliver property.",
+        "max_imprisonment_years": 3,
+        "is_cognizable": True,
+        "is_bailable": False,
+        "triable_by": "Any Magistrate",
+        "compoundable": False,
+        "confusable_group": "PROPERTY_THEFT_CLUSTER",
+        "essential_elements": [
+            "Intentionally putting any person in fear of any injury to that person or another",
+            "Dishonestly inducing person so put in fear to deliver any property or valuable security"
+        ],
+        "statutory_exceptions": []
+    },
+    "IPC_392_BNS_309": {
+        "article_code": "IPC_392_BNS_309",
+        "ipc_section": "Section 392 IPC",
+        "bns_section": "Section 309(4) BNS",
+        "title": "Punishment for Robbery",
+        "category": "Property Offences",
+        "charge": "Robbery / Extortion with Force or Weapon Threat",
+        "penalty_tier": "Tier 3: 7 to 10 Years (Serious Offence / Substantial Imprisonment)",
+        "punishment_ipc": "Rigorous imprisonment up to 10 years, and fine; if on highway between sunset and sunrise, up to 14 years",
+        "punishment_bns": "Rigorous imprisonment up to 10 years, and fine; if on highway, up to 14 years",
+        "statutory_delta": "Distinguished from simple theft by presence of immediate physical force, hurt, or imminent threat of death.",
+        "max_imprisonment_years": 10,
+        "is_cognizable": True,
+        "is_bailable": False,
+        "triable_by": "Magistrate of the First Class",
+        "compoundable": False,
+        "confusable_group": "PROPERTY_THEFT_CLUSTER",
+        "essential_elements": [
+            "Commission of theft or extortion",
+            "Causing or attempting to cause death, hurt, or wrongful restraint",
+            "Act done in order to the committing of theft or carrying away property"
+        ],
+        "statutory_exceptions": []
+    },
+    "IPC_395_BNS_310": {
+        "article_code": "IPC_395_BNS_310",
+        "ipc_section": "Section 395 IPC",
+        "bns_section": "Section 310(2) BNS",
+        "title": "Punishment for Dacoity",
+        "category": "Property Offences",
+        "charge": "Dacoity (Gang Robbery by 5 or More Persons)",
+        "penalty_tier": "Tier 4: Life Imprisonment / Capital Sentence (Heinous Offence)",
+        "punishment_ipc": "Imprisonment for Life, or rigorous imprisonment up to 10 years, and fine",
+        "punishment_bns": "Imprisonment for Life, or rigorous imprisonment up to 10 years, and fine",
+        "statutory_delta": "Requires minimum 5 persons acting conjointly to commit or attempt robbery.",
+        "max_imprisonment_years": 99,
+        "is_cognizable": True,
+        "is_bailable": False,
+        "triable_by": "Court of Session",
+        "compoundable": False,
+        "confusable_group": "PROPERTY_THEFT_CLUSTER",
+        "essential_elements": [
+            "Robbery committed or attempted by five or more persons acting conjointly",
+            "Each person participating is deemed guilty of dacoity"
+        ],
+        "statutory_exceptions": []
+    },
+    "IPC_397_BNS_311": {
+        "article_code": "IPC_397_BNS_311",
+        "ipc_section": "Section 397 IPC",
+        "bns_section": "Section 311 BNS",
+        "title": "Robbery, or Dacoity, with Attempt to Cause Death or Grievous Hurt",
+        "category": "Property Offences",
+        "charge": "Armed Robbery with Deadly Weapon Brandished",
+        "penalty_tier": "Tier 3: 7 to 10 Years (Serious Offence / Substantial Imprisonment)",
+        "punishment_ipc": "Rigorous imprisonment not less than 7 years",
+        "punishment_bns": "Rigorous imprisonment not less than 7 years",
+        "statutory_delta": "Sets statutory minimum sentence of 7 years where offender uses deadly weapon during robbery.",
+        "max_imprisonment_years": 10,
+        "is_cognizable": True,
+        "is_bailable": False,
+        "triable_by": "Court of Session",
+        "compoundable": False,
+        "confusable_group": "PROPERTY_THEFT_CLUSTER",
+        "essential_elements": [
+            "Offender uses any deadly weapon, or causes grievous hurt to any person, or attempts to cause death or grievous hurt",
+            "Committed during the course of robbery or dacoity"
+        ],
+        "statutory_exceptions": []
+    },
+    "IPC_406_BNS_316": {
+        "article_code": "IPC_406_BNS_316",
+        "ipc_section": "Section 406 IPC",
+        "bns_section": "Section 316(2) BNS",
+        "title": "Punishment for Criminal Breach of Trust",
+        "category": "Fraud & Fiduciary Offences",
+        "charge": "Criminal Breach of Trust (Misappropriation of Entrusted Property)",
+        "penalty_tier": "Tier 2: 3 to 7 Years (Arnesh Kumar Threshold / Medium Penalty)",
+        "punishment_ipc": "Imprisonment up to 3 years, or fine, or both",
+        "punishment_bns": "Imprisonment up to 5 years, or fine, or both",
+        "statutory_delta": "CRITICAL DIFFERENCE: BNS Section 316(2) raised punishment ceiling from 3 years under IPC 406 to 5 years.",
+        "max_imprisonment_years": 5,
+        "is_cognizable": True,
+        "is_bailable": False,
+        "triable_by": "Magistrate of the First Class",
+        "compoundable": True,
+        "confusable_group": "FRAUD_BREACH_TRUST_CLUSTER",
+        "essential_elements": [
+            "Entrustment with property or with any dominion over property",
+            "Dishonest misappropriation or conversion to offender's own use",
+            "Distinguished from cheating: initial entrustment was lawful and voluntary without deception at inception"
+        ],
+        "statutory_exceptions": []
+    },
+    "IPC_409_BNS_316_5": {
+        "article_code": "IPC_409_BNS_316_5",
+        "ipc_section": "Section 409 IPC",
+        "bns_section": "Section 316(5) BNS",
+        "title": "Criminal Breach of Trust by Public Servant, Banker, Merchant or Agent",
+        "category": "Fraud & Fiduciary Offences",
+        "charge": "Breach of Trust by Public Servant / Banker / Agent",
+        "penalty_tier": "Tier 4: Life Imprisonment / Capital Sentence (Heinous Offence)",
+        "punishment_ipc": "Imprisonment for Life, or imprisonment up to 10 years, and fine",
+        "punishment_bns": "Imprisonment for Life, or imprisonment up to 10 years, and fine",
+        "statutory_delta": "Aggravated fiduciary breach; public servant, banker, or authorized financial custodian.",
+        "max_imprisonment_years": 99,
+        "is_cognizable": True,
+        "is_bailable": False,
+        "triable_by": "Magistrate of the First Class",
+        "compoundable": False,
+        "confusable_group": "FRAUD_BREACH_TRUST_CLUSTER",
+        "essential_elements": [
+            "Criminal breach of trust committed by public servant, banker, merchant, factor, broker, attorney, or agent",
+            "Property entrusted in professional fiduciary capacity"
+        ],
+        "statutory_exceptions": []
+    },
+    "IPC_411_BNS_317_2": {
+        "article_code": "IPC_411_BNS_317_2",
+        "ipc_section": "Section 411 IPC",
+        "bns_section": "Section 317(2) BNS",
+        "title": "Dishonestly Receiving Stolen Property",
+        "category": "Property Offences",
+        "charge": "Receiving Stolen Property with Knowledge",
+        "penalty_tier": "Tier 1: Up to 3 Years (Minor / Summary Offence)",
+        "punishment_ipc": "Imprisonment up to 3 years, or fine, or both",
+        "punishment_bns": "Imprisonment up to 3 years, or fine, or both",
+        "statutory_delta": "Re-enacted in BNS Section 317(2); receiver is distinct from original thief but possesses knowing it to be stolen.",
+        "max_imprisonment_years": 3,
+        "is_cognizable": True,
+        "is_bailable": False,
+        "triable_by": "Any Magistrate",
+        "compoundable": True,
+        "confusable_group": "PROPERTY_THEFT_CLUSTER",
+        "essential_elements": [
+            "Dishonestly receiving or retaining any stolen property",
+            "Knowing or having reason to believe the same to be stolen property"
+        ],
+        "statutory_exceptions": []
+    },
+    "IPC_420_BNS_318": {
+        "article_code": "IPC_420_BNS_318",
+        "ipc_section": "Section 420 IPC",
+        "bns_section": "Section 318(4) BNS",
+        "title": "Cheating and Dishonestly Inducing Delivery of Property",
+        "category": "Fraud & Fiduciary Offences",
+        "charge": "Cheating & Financial Fraud (Deceit at Inception)",
+        "penalty_tier": "Tier 2: 3 to 7 Years (Arnesh Kumar Threshold / Medium Penalty)",
+        "punishment_ipc": "Imprisonment up to 7 years, and fine",
+        "punishment_bns": "Imprisonment up to 7 years, and fine",
+        "statutory_delta": "Re-enacted as BNS 318(4); requires fraudulent or dishonest intention operating right from the beginning.",
+        "max_imprisonment_years": 7,
+        "is_cognizable": True,
+        "is_bailable": False,
+        "triable_by": "Magistrate of the First Class",
+        "compoundable": True,
+        "confusable_group": "FRAUD_BREACH_TRUST_CLUSTER",
+        "essential_elements": [
+            "Deception of any person",
+            "Fraudulently or dishonestly inducing the person deceived to deliver property or make/alter valuable security",
+            "Dishonest intention operating from the very inception of transaction (Hridaya Ranjan Prasad Verma ratio)"
+        ],
+        "statutory_exceptions": []
+    },
+
+    # ── D. Documents, Forgery & False Records (4 Articles) ────────────────────
+    "IPC_465_BNS_336_2": {
+        "article_code": "IPC_465_BNS_336_2",
+        "ipc_section": "Section 465 IPC",
+        "bns_section": "Section 336(2) BNS",
+        "title": "Punishment for Forgery (Simple)",
+        "category": "Forgery & Document Offences",
+        "charge": "Simple Forgery (Making False Document)",
+        "penalty_tier": "Tier 1: Up to 3 Years (Minor / Summary Offence)",
+        "punishment_ipc": "Imprisonment up to 2 years, or fine, or both",
+        "punishment_bns": "Imprisonment up to 2 years, or fine, or both",
+        "statutory_delta": "Re-enacted under BNS Section 336(2); foundational offence for making false document.",
+        "max_imprisonment_years": 2,
+        "is_cognizable": False,
+        "is_bailable": True,
+        "triable_by": "Magistrate of the First Class",
+        "compoundable": False,
+        "confusable_group": "FORGERY_CLUSTER",
+        "essential_elements": [
+            "Making false document or false electronic record",
+            "Done with intent to cause damage or injury, or support claim or title"
+        ],
+        "statutory_exceptions": []
+    },
+    "IPC_467_BNS_338": {
+        "article_code": "IPC_467_BNS_338",
+        "ipc_section": "Section 467 IPC",
+        "bns_section": "Section 338 BNS",
+        "title": "Forgery of Valuable Security, Will, etc.",
+        "category": "Forgery & Document Offences",
+        "charge": "Forgery of Valuable Security / Will / Title Deed",
+        "penalty_tier": "Tier 4: Life Imprisonment / Capital Sentence (Heinous Offence)",
+        "punishment_ipc": "Imprisonment for Life, or imprisonment up to 10 years, and fine",
+        "punishment_bns": "Imprisonment for Life, or imprisonment up to 10 years, and fine",
+        "statutory_delta": "Aggravated forgery involving deeds, wills, power of attorney, or bank guarantees.",
+        "max_imprisonment_years": 99,
+        "is_cognizable": True,
+        "is_bailable": False,
+        "triable_by": "Magistrate of the First Class",
+        "compoundable": False,
+        "confusable_group": "FORGERY_CLUSTER",
+        "essential_elements": [
+            "Forgery of document purporting to be a valuable security, will, authority to adopt, or receipt acknowledging money"
+        ],
+        "statutory_exceptions": []
+    },
+    "IPC_468_BNS_336_3": {
+        "article_code": "IPC_468_BNS_336_3",
+        "ipc_section": "Section 468 IPC",
+        "bns_section": "Section 336(3) BNS",
+        "title": "Forgery for Purpose of Cheating",
+        "category": "Forgery & Document Offences",
+        "charge": "Forgery for Purpose of Cheating (Fake ID / Appointment Letter)",
+        "penalty_tier": "Tier 2: 3 to 7 Years (Arnesh Kumar Threshold / Medium Penalty)",
+        "punishment_ipc": "Imprisonment up to 7 years, and fine",
+        "punishment_bns": "Imprisonment up to 7 years, and fine",
+        "statutory_delta": "BNS Section 336(3) applies when false certificate, ID, or appointment letter is forged with intent to defraud.",
+        "max_imprisonment_years": 7,
+        "is_cognizable": True,
+        "is_bailable": False,
+        "triable_by": "Magistrate of the First Class",
+        "compoundable": False,
+        "confusable_group": "FORGERY_CLUSTER",
+        "essential_elements": [
+            "Forgery of document",
+            "Intention that document forged shall be used for purpose of cheating"
+        ],
+        "statutory_exceptions": []
+    },
+    "IPC_471_BNS_340_2": {
+        "article_code": "IPC_471_BNS_340_2",
+        "ipc_section": "Section 471 IPC",
+        "bns_section": "Section 340(2) BNS",
+        "title": "Using as Genuine a Forged Document",
+        "category": "Forgery & Document Offences",
+        "charge": "Using Forged Document as Genuine (Submitting Counterfeit Record)",
+        "penalty_tier": "Tier 2: 3 to 7 Years (Arnesh Kumar Threshold / Medium Penalty)",
+        "punishment_ipc": "Punished in same manner as if accused had forged the document",
+        "punishment_bns": "Punished in same manner as if accused had forged the document",
+        "statutory_delta": "BNS Section 340(2); targets the user/beneficiary who tenders forged document knowing it to be fake.",
+        "max_imprisonment_years": 7,
+        "is_cognizable": True,
+        "is_bailable": False,
+        "triable_by": "Magistrate of the First Class",
+        "compoundable": False,
+        "confusable_group": "FORGERY_CLUSTER",
+        "essential_elements": [
+            "Fraudulently or dishonestly using as genuine any document known or believed to be forged"
+        ],
+        "statutory_exceptions": []
+    },
+
+    # ── E. Public Order, Intimidation & Quashing (6 Articles) ─────────────────
+    "IPC_147_BNS_191_2": {
+        "article_code": "IPC_147_BNS_191_2",
+        "ipc_section": "Section 147 IPC",
+        "bns_section": "Section 191(2) BNS",
+        "title": "Punishment for Rioting",
+        "category": "Public Order Offences",
+        "charge": "Rioting (Unlawful Assembly using Force/Violence)",
+        "penalty_tier": "Tier 1: Up to 3 Years (Minor / Summary Offence)",
+        "punishment_ipc": "Imprisonment up to 2 years, or fine, or both",
+        "punishment_bns": "Imprisonment up to 2 years, or fine, or both",
+        "statutory_delta": "Re-enacted under BNS Section 191(2); force or violence used by unlawful assembly of 5+ persons.",
+        "max_imprisonment_years": 2,
+        "is_cognizable": True,
+        "is_bailable": True,
+        "triable_by": "Any Magistrate",
+        "compoundable": False,
+        "confusable_group": "PUBLIC_ORDER_CLUSTER",
+        "essential_elements": [
+            "Unlawful assembly of five or more persons",
+            "Force or violence used by an unlawful assembly or any member thereof in prosecution of common object"
+        ],
+        "statutory_exceptions": []
+    },
+    "IPC_148_BNS_191_3": {
+        "article_code": "IPC_148_BNS_191_3",
+        "ipc_section": "Section 148 IPC",
+        "bns_section": "Section 191(3) BNS",
+        "title": "Rioting, Armed with Deadly Weapon",
+        "category": "Public Order Offences",
+        "charge": "Armed Rioting with Deadly Weapon",
+        "penalty_tier": "Tier 1: Up to 3 Years (Minor / Summary Offence)",
+        "punishment_ipc": "Imprisonment up to 3 years, or fine, or both",
+        "punishment_bns": "Imprisonment up to 3 years, or fine, or both",
+        "statutory_delta": "Re-enacted in BNS Section 191(3); unlawful assembly member armed with deadly weapons.",
+        "max_imprisonment_years": 3,
+        "is_cognizable": True,
+        "is_bailable": True,
+        "triable_by": "Magistrate of the First Class",
+        "compoundable": False,
+        "confusable_group": "PUBLIC_ORDER_CLUSTER",
+        "essential_elements": [
+            "Guilty of rioting",
+            "Armed with deadly weapon or anything used offensively likely to cause death"
+        ],
+        "statutory_exceptions": []
+    },
+    "IPC_160_BNS_194": {
+        "article_code": "IPC_160_BNS_194",
+        "ipc_section": "Section 160 IPC",
+        "bns_section": "Section 194 BNS",
+        "title": "Punishment for Committing Affray",
+        "category": "Public Order Offences",
+        "charge": "Affray (Public Fighting Disturbing Public Peace)",
+        "penalty_tier": "Tier 1: Up to 3 Years (Minor / Summary Offence)",
+        "punishment_ipc": "Imprisonment up to 1 month, or fine up to ₹100, or both",
+        "punishment_bns": "Imprisonment up to 1 month, or fine up to ₹1,000, or both, or community service",
+        "statutory_delta": "BNS Section 194 increased fine tenfold to ₹1,000 and added community service.",
+        "max_imprisonment_years": 1,
+        "is_cognizable": True,
+        "is_bailable": True,
+        "triable_by": "Any Magistrate",
+        "compoundable": False,
+        "confusable_group": "PUBLIC_ORDER_CLUSTER",
+        "essential_elements": [
+            "Two or more persons fighting in a public place",
+            "Actually disturbing the public peace"
+        ],
+        "statutory_exceptions": []
+    },
+    "IPC_506_PART1_BNS_351_2": {
+        "article_code": "IPC_506_PART1_BNS_351_2",
+        "ipc_section": "Section 506 Part I IPC",
+        "bns_section": "Section 351(2) BNS",
+        "title": "Punishment for Criminal Intimidation (Simple Threat)",
+        "category": "Intimidation & Harassment",
+        "charge": "Criminal Intimidation (Simple Threat to Reputation/Property)",
+        "penalty_tier": "Tier 1: Up to 3 Years (Minor / Summary Offence)",
+        "punishment_ipc": "Imprisonment up to 2 years, or fine, or both",
+        "punishment_bns": "Imprisonment up to 2 years, or fine, or both",
+        "statutory_delta": "Simple intimidation; threat to cause alarm without threat of death or grievous hurt.",
+        "max_imprisonment_years": 2,
+        "is_cognizable": False,
+        "is_bailable": True,
+        "triable_by": "Any Magistrate",
+        "compoundable": True,
+        "confusable_group": "INTIMIDATION_CLUSTER",
+        "essential_elements": [
+            "Threatening another person with injury to person, reputation, or property",
+            "Intent to cause alarm to that person"
+        ],
+        "statutory_exceptions": []
+    },
+    "IPC_506_PART2_BNS_351_3": {
+        "article_code": "IPC_506_PART2_BNS_351_3",
+        "ipc_section": "Section 506 Part II IPC",
+        "bns_section": "Section 351(3) BNS",
+        "title": "Criminal Intimidation (Death Threat / Grievous Hurt)",
+        "category": "Intimidation & Harassment",
+        "charge": "Criminal Intimidation with Threat of Death or Grievous Hurt",
+        "penalty_tier": "Tier 2: 3 to 7 Years (Arnesh Kumar Threshold / Medium Penalty)",
+        "punishment_ipc": "Imprisonment up to 7 years, or fine, or both",
+        "punishment_bns": "Imprisonment up to 7 years, or fine, or both",
+        "statutory_delta": "Aggravated intimidation where threat is to cause death, grievous hurt, or destruction of property by fire.",
+        "max_imprisonment_years": 7,
+        "is_cognizable": False,
+        "is_bailable": True,
+        "triable_by": "Magistrate of the First Class",
+        "compoundable": True,
+        "confusable_group": "INTIMIDATION_CLUSTER",
+        "essential_elements": [
+            "Criminal intimidation where threat is to cause death, grievous hurt, or destruction of property by fire"
+        ],
+        "statutory_exceptions": []
+    },
+    "IPC_509_BNS_79": {
+        "article_code": "IPC_509_BNS_79",
+        "ipc_section": "Section 509 IPC",
+        "bns_section": "Section 79 BNS",
+        "title": "Word, Gesture or Act Intended to Insult the Modesty of a Woman",
+        "category": "Sexual & Modesty Offences",
+        "charge": "Insulting Modesty of Woman (Verbal / Gestural / Voyeuristic)",
+        "penalty_tier": "Tier 1: Up to 3 Years (Minor / Summary Offence)",
+        "punishment_ipc": "Simple imprisonment up to 3 years, and fine",
+        "punishment_bns": "Simple imprisonment up to 3 years, and fine, or community service",
+        "statutory_delta": "BNS Section 79 adds community service; covers words uttered, sounds made, or intruding upon privacy of woman.",
+        "max_imprisonment_years": 3,
+        "is_cognizable": True,
+        "is_bailable": True,
+        "triable_by": "Any Magistrate",
+        "compoundable": True,
+        "confusable_group": "MODESTY_CLUSTER",
+        "essential_elements": [
+            "Intending to insult the modesty of any woman",
+            "Uttering any word, making any sound or gesture, or exhibiting any object, or intruding upon privacy"
+        ],
+        "statutory_exceptions": []
+    },
+    "NONE_CIVIL_DISPUTE": {
+        "article_code": "NONE_CIVIL_DISPUTE",
+        "ipc_section": "Section 482 CrPC (Quashing)",
+        "bns_section": "Section 528 BNSS (Quashing)",
+        "title": "Civil Commercial Dispute / Contractual Breach Quashed",
+        "category": "Judicial Quashing & Abstention",
+        "charge": "Commercial Contractual Breach (Quashed u/s 482 CrPC / s.528 BNSS)",
+        "penalty_tier": "Quashed u/s 482 CrPC / s.528 BNSS (No Penal Term)",
+        "punishment_ipc": "No penal liability - Criminal proceedings quashed as civil dispute",
+        "punishment_bns": "No penal liability - Criminal proceedings quashed as civil dispute",
+        "statutory_delta": "Section 482 CrPC equivalent is Section 528 BNSS; inherently civil disputes cannot be given criminal cloak.",
+        "max_imprisonment_years": 0,
+        "is_cognizable": False,
+        "is_bailable": True,
+        "triable_by": "High Court (Inherent Powers)",
+        "compoundable": True,
+        "confusable_group": "CIVIL_ABSTENTION_CLUSTER",
+        "essential_elements": [
+            "Commercial breach of contract or delayed payment",
+            "Absence of fraudulent intention at inception (State of Haryana v. Bhajan Lal ratio)"
+        ],
+        "statutory_exceptions": []
+    },
+    "NONE_OUT_OF_DOMAIN": {
+        "article_code": "NONE_OUT_OF_DOMAIN",
+        "ipc_section": "Out of Jurisdiction",
+        "bns_section": "Out of Jurisdiction",
+        "title": "Non-Legal / Insufficient Criminal Facts",
+        "category": "Judicial Quashing & Abstention",
+        "charge": "Non-Legal / Insufficient Criminal Facts",
+        "penalty_tier": "No Penalty Attracted",
+        "punishment_ipc": "No offence disclosed",
+        "punishment_bns": "No offence disclosed",
+        "statutory_delta": "Fails minimum threshold of penal facts.",
+        "max_imprisonment_years": 0,
+        "is_cognizable": False,
+        "is_bailable": True,
+        "triable_by": "None",
+        "compoundable": False,
+        "confusable_group": "CIVIL_ABSTENTION_CLUSTER",
+        "essential_elements": ["No cognizable or non-cognizable penal element present"],
+        "statutory_exceptions": []
+    }
+}
+
+
+def build_statutes_kb():
+    """Generates statutes_40_registry.json and statutes_40_kb.csv."""
+    json_path = DATA_DIR / "statutes_40_registry.json"
+    csv_path = DATA_DIR / "statutes_40_kb.csv"
+
+    # 1. Write JSON
+    with open(json_path, "w", encoding="utf-8") as f:
+        json.dump(STATUTES_40, f, indent=2, ensure_ascii=False)
+    print(f"[KB-Build] Wrote {len(STATUTES_40)} articles to {json_path}")
+
+    # 2. Write CSV
+    fieldnames = [
+        "article_code", "ipc_section", "bns_section", "title", "category",
+        "charge", "penalty_tier", "punishment_ipc", "punishment_bns",
+        "statutory_delta", "max_imprisonment_years", "is_cognizable",
+        "is_bailable", "triable_by", "compoundable", "confusable_group"
+    ]
+    with open(csv_path, "w", encoding="utf-8", newline="") as f:
+        writer = csv.DictWriter(f, fieldnames=fieldnames, extrasaction="ignore")
+        writer.writeheader()
+        for art in STATUTES_40.values():
+            writer.writerow(art)
+    print(f"[KB-Build] Wrote {len(STATUTES_40)} articles to {csv_path}")
+
+
+if __name__ == "__main__":
+    build_statutes_kb()

@@ -90,11 +90,11 @@ def discover_gemini_models(api_key: str) -> List[str]:
 
     def model_rank(m_name: str) -> int:
         m_lower = m_name.lower()
-        if "3-flash" in m_lower:
-            return 0
         if "3.1-flash-lite" in m_lower:
+            return 0
+        if "flash-lite" in m_lower:
             return 1
-        if "flash-lite-latest" in m_lower:
+        if "3-flash" in m_lower:
             return 2
         if "flash-latest" in m_lower:
             return 3
@@ -109,7 +109,7 @@ def discover_gemini_models(api_key: str) -> List[str]:
     if models:
         models.sort(key=model_rank)
     else:
-        models = ["gemini-3-flash-preview", "gemini-3.1-flash-lite-preview", "gemini-flash-lite-latest", "gemini-flash-latest"]
+        models = ["gemini-3.1-flash-lite", "gemini-3.1-flash-lite-preview", "gemini-3-flash-preview", "gemini-flash-lite-latest"]
 
     _DISCOVERED_GEMINI_MODELS[api_key] = models
     return models

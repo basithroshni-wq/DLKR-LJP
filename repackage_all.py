@@ -29,9 +29,9 @@ EXCLUDE_PATTERNS = [
 def should_exclude(file_path: Path) -> bool:
     parts = file_path.parts
     for p in parts:
-        if p in ["__pycache__", ".git", ".pytest_cache"]:
+        if p in ["__pycache__", ".git", ".pytest_cache", "runtime_data", "graphify-out"]:
             return True
-    if file_path.suffix in [".pyc", ".zip"]:
+    if file_path.suffix in [".pyc", ".zip"] or file_path.name == ".env":
         return True
     return False
 
@@ -42,7 +42,7 @@ def make_zip(source_dir: Path, output_zip_path: Path, prefix_in_zip: str = ""):
     with zipfile.ZipFile(output_zip_path, "w", zipfile.ZIP_DEFLATED) as zf:
         for root, dirs, files in os.walk(source_dir):
             # Prune excluded directories in-place
-            dirs[:] = [d for d in dirs if d not in ["__pycache__", ".git", ".pytest_cache", "runtime_data"]]
+            dirs[:] = [d for d in dirs if d not in ["__pycache__", ".git", ".pytest_cache", "runtime_data", "graphify-out"]]
             for f in files:
                 f_path = Path(root) / f
                 if should_exclude(f_path):

@@ -1,0 +1,21 @@
+{
+  "0": "QwenLegalReasoner",
+  "1": "Any",
+  "2": "train_heads.py",
+  "3": "config.py",
+  "4": "MultiTaskLegalPredictor",
+  "5": "rhetorical_extractor.py",
+  "6": "⚖️ DLKR-LJP V6.0 Flagship: Dynamic Legal Knowledge Retrieval for Legal Judgment Prediction",
+  "7": "⚖️ DLKR-LJP V5.1 (Flagship Top Model): Dynamic Legal Knowledge Retrieval for Legal Judgment Prediction",
+  "8": "dlkr_ljp_v5_final.py",
+  "9": "AtomicLegalFactExtractor",
+  "10": "IldcCorpusStreamer",
+  "11": "DynamicLegalKnowledgeRetriever",
+  "12": "NeuralAttentionResolver",
+  "13": "repackage_all.py",
+  "14": "data_pipeline/__init__.py",
+  "15": "graph_engine/__init__.py",
+  "16": "models/__init__.py",
+  "17": "training/__init__.py",
+  "18": "verification/__init__.py"
+}
