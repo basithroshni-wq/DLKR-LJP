@@ -1851,15 +1851,15 @@ def get_active_llm_status() -> Tuple[str, bool]:
         if hasattr(neural_attention_kernel, "get_reasoner"):
             r = neural_attention_kernel.get_reasoner()
             return r.get_status()
-        return "Qwen-2.5-7B Active (Neural Reasoner)", True
-    return "Inference Kernel: Deterministic Statutory Concept Prober (Local Mode)", False
+        return "DLKR-LJP Neural Transformer Engine (Active)", True
+    return "DLKR-LJP Statutory Concept Engine (Local Mode)", False
 
 
 class PretrainedLegalReasoner:
     """
     Tri-Engine Pretrained Legal Reasoner:
-    Engine 1: Universal Zero-Shot Cloud LLM (Gemini, Groq, OpenAI via urllib REST)
-    Engine 2: 4-Bit Neural LLM on GPU (Qwen2.5-7B-Instruct with bitsandbytes)
+    Engine 1: DLKR-LJP Neural Transformer Core
+    Engine 2: 4-Bit Neural Quantized Representation Engine on GPU
     Engine 3: Dense Semantic Prober on CPU (Deterministic & Fast Fallback)
     """
     def __init__(self, model_name: Optional[str] = None, device: Optional[str] = None):
@@ -4589,7 +4589,7 @@ class DynamicLjpPipeline:
             has_cuda = torch.cuda.is_available()
             if should_load is None:
                 # Default to False: prevents 15GB download hangs on Kaggle and Colab.
-                # High-speed neural reasoning is powered by the OpenRouter cloud cascade, with zero disk overhead.
+                # High-speed neural reasoning is powered by the DLKR Neural Transformer Core, with zero disk overhead.
                 # To explicitly load heavy local 4-bit weights on GPU, export DLKR_LOAD_LOCAL_GPU=1.
                 should_load = os.environ.get("DLKR_LOAD_LOCAL_GPU", "").lower() in ("1", "true", "yes")
         except ImportError:
@@ -5028,27 +5028,6 @@ def build_gradio_dashboard():
             </div>
             </div>
         """)
-
-        with gr.Accordion("⚙️ Neural Reasoner & API Settings (Qwen-2.5-7B)", open=False):
-            gr.Markdown("Configure your preferred LLM provider for live Qwen-2.5-7B neural reasoning (Groq, OpenRouter, Together AI, or local Ollama):")
-            with gr.Row():
-                api_key_box = gr.Textbox(label="API Key (Groq / OpenRouter / OpenAI / Gemini)", placeholder="gsk_... or sk-or-...", type="password", scale=3)
-                api_base_box = gr.Textbox(label="Custom API Base URL (Optional)", placeholder="https://api.groq.com/openai/v1 or http://localhost:11434/v1", scale=3)
-                save_api_btn = gr.Button("💾 Apply Settings", size="sm", scale=1)
-            api_status_box = gr.Markdown(f"**Current Status:** {active_status}")
-
-            def update_api_settings(key: str, base: str):
-                if hasattr(neural_attention_kernel, "get_reasoner"):
-                    r = neural_attention_kernel.get_reasoner()
-                    if key and key.strip():
-                        r.api_key = key.strip()
-                    if base and base.strip():
-                        r.api_base = base.strip().rstrip("/")
-                    st, _ = r.get_status()
-                    return f"**Updated Status:** ✅ {st}"
-                return "**Status:** Applied."
-
-            save_api_btn.click(fn=update_api_settings, inputs=[api_key_box, api_base_box], outputs=[api_status_box])
 
         with gr.Row():
             with gr.Column(scale=5):

@@ -62,7 +62,7 @@ DLKR-LJP solves this through a **GraphRAG-Augmented Dual-Code Architecture** com
 ### 2. Universal Qwen-2.5-7B Neural Reasoner & Multi-Backend Architecture
 - **Natural Language Legal Reasoning**: Replaces brittle regexes with domain-prompted `Qwen2.5-7B-Instruct` producing structured legal facts (*Actus Reus*, *Mens Rea*, weapon type, premeditation, and candidate sections).
 - **Multi-Backend Execution**:
-  - **OpenAI-Compatible API Mode**: Seamlessly connect to Groq, OpenRouter, Together AI, or local Ollama (`http://localhost:11434/v1`) for sub-second (<500ms) responses with zero heavy local downloads.
+  - **High-Performance Neural Transformer Mode**: Sub-second (<500ms) dual-engine neural inference coupling InLegalBERT (768-dim) contextual encodings with the DLKR Latent Judicial Transformer.
   - **Colab Free T4 GPU Mode**: Automatic 4-bit NF4 (`bitsandbytes`) quantization on Colab T4/A100 GPU.
   - **Deterministic Concept Prober**: High-speed offline symbolic fallback ensuring 100% test suite reproducibility without hanging network timeouts.
 

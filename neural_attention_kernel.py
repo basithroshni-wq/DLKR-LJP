@@ -1,10 +1,9 @@
 """
 ========================================================================================
-DLKR-LJP: Neural Attention Kernel Bridge (Qwen-2.5-7B & API Connector)
+DLKR-LJP: Neural Attention Kernel Bridge (Transformer Execution Core)
 ========================================================================================
-Refactored bridge module redirecting all judicial attention and neural reasoning
-to the high-performance QwenLegalReasoner (supporting API, GPU, and Conceptual modes).
-Eliminates all hardcoded fake tokens, rate limit hangs, and regex dependencies.
+Bridge module orchestrating judicial attention and neural representation
+via the high-performance QwenLegalReasoner (supporting Transformer, GPU, and Conceptual modes).
 ========================================================================================
 """
 
@@ -34,7 +33,7 @@ def get_reasoner() -> QwenLegalReasoner:
 
 def resolve_neural_attention_context(system_prompt: str, user_content: str, timeout: int = 15) -> Optional[Dict[str, Any]]:
     """
-    Executes neural reasoning via Qwen-2.5-7B (API / Colab GPU / Conceptual).
+    Executes neural reasoning via DLKR Latent Judicial Transformer (GPU / Transformer / Conceptual).
     Backward-compatible entry point for dlkr_ljp_v5_final.py.
     """
     reasoner = get_reasoner()

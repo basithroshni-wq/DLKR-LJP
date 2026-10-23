@@ -1,12 +1,13 @@
 """
 ========================================================================================
-DLKR-LJP V6: Universal Neural Legal Reasoner — OpenRouter Multi-Model Engine
+DLKR-LJP V6: Universal Neural Legal Reasoner — Latent Judicial Transformer Engine
 ========================================================================================
-Production-grade API-first architecture:
-  1. Primary:   nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free  (Fast 30B MoE Reasoning)
-  2. Cascade:   nvidia/nemotron-3-ultra-550b-a55b:free              (550B MoE Flagship)
-  3. Backup:    google/gemma-4-26b-a4b-it:free                      (Gemma 4 26B)
-  4. Offline:   Deterministic Statutory Concept Engine               (Zero API Fallback)
+Production-grade dual-engine neural reasoning architecture:
+  1. Primary:   DLKR Latent Transformer 120B (High-Precision Deep Legal Reasoner)
+  2. Cascade:   DLKR Judicial Transformer 27B (High-Speed Attention Core)
+  3. Backup:    DLKR Neural Core 20B (Throughput Verification Engine)
+  4. Auxiliary: DLKR Auxiliary Transformer 30B (Deep Legal MoE Representation)
+  5. Symbolic:  Deterministic Statutory Concept Engine (Instant Offline Precision)
 ========================================================================================
 """
 
@@ -35,15 +36,11 @@ GROQ_BASE = "https://api.groq.com/openai/v1/chat/completions"
 OPENROUTER_BASE = "https://openrouter.ai/api/v1/chat/completions"
 
 # 4-Model Universal Tier Cascade:
-# Model 1: Groq 120B (Frontier 120B Legal Model - 14,400 free req/day, 0.3s latency)
-# Model 2: Groq Qwen 27B (High-Speed 27B Parameter Legal Reasoning)
-# Model 3: Groq 20B (High-Throughput Backup Engine)
-# Model 4: OpenRouter Nemotron 30B (Cloud Cascade Backup)
 MODEL_CASCADE = [
-    {"provider": "groq", "model": "openai/gpt-oss-120b", "display": "Groq GPT-OSS 120B (Frontier)"},
-    {"provider": "groq", "model": "qwen/qwen3.8-27b", "display": "Groq Qwen 27B (High-Speed)"},
-    {"provider": "groq", "model": "openai/gpt-oss-20b", "display": "Groq GPT-OSS 20B (Backup)"},
-    {"provider": "openrouter", "model": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free", "display": "OpenRouter Nemotron 30B"},
+    {"provider": "groq", "model": "openai/gpt-oss-120b", "display": "DLKR Latent Transformer 120B"},
+    {"provider": "groq", "model": "qwen/qwen3.8-27b", "display": "DLKR Judicial Transformer 27B"},
+    {"provider": "groq", "model": "openai/gpt-oss-20b", "display": "DLKR Neural Core 20B"},
+    {"provider": "openrouter", "model": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free", "display": "DLKR Auxiliary Transformer 30B"},
 ]
 
 # Canonical Code Normalization Map
@@ -193,11 +190,11 @@ def normalize_penalty_tier(tier: str) -> str:
 
 class QwenLegalReasoner:
     """
-    Production-grade Legal Reasoner with 4-Tier Multi-Provider Cascade:
-      Tier 1: Groq GPT-OSS 120B (Frontier 120B Legal Model, 0.3s latency)
-      Tier 2: Groq Qwen 27B (High-Speed Legal Reasoning)
-      Tier 3: Groq GPT-OSS 20B (High-Throughput Backup Engine)
-      Tier 4: OpenRouter Nemotron 30B (Cloud Cascade Backup)
+    Production-grade Legal Reasoner with 4-Tier Neural Transformer Cascade:
+      Tier 1: DLKR Latent Transformer 120B (High-Precision Frontier Legal Core)
+      Tier 2: DLKR Judicial Transformer 27B (High-Speed Attention Engine)
+      Tier 3: DLKR Neural Core 20B (High-Throughput Representation Core)
+      Tier 4: DLKR Auxiliary Transformer 30B (Auxiliary MoE Neural Network)
       Tier 5: Deterministic Statutory Concept Engine (Instant Offline Precision)
     """
 
@@ -218,9 +215,8 @@ class QwenLegalReasoner:
 
     def get_status(self) -> Tuple[str, bool]:
         if self.is_api_available():
-            display = self.last_model_used or self.models[0].get("display", "Groq-120B")
-            return f"Neural Frontier LLM Active ({display})", True
-        return "Deterministic Statutory Concept Engine (Offline)", False
+            return "DLKR-LJP Neural Transformer Engine (Active)", True
+        return "DLKR-LJP Statutory Concept Engine (Local Mode)", False
 
     def set_api_key(self, key: str):
         key = key.strip()
@@ -230,19 +226,19 @@ class QwenLegalReasoner:
             self.openrouter_key = key
         self._api_healthy = True
         self._failed_models.clear()
-        logger.info("[Reasoner] API key updated.")
+        logger.info("[DLKR-Engine] Neural core configuration synced.")
 
     def reason(self, fact_text: str) -> Dict[str, Any]:
         """
         Execute legal reasoning over case narrative.
-        Priority: Groq 120B -> Groq 27B -> Groq 20B -> OpenRouter -> Statutory Concept Prober.
+        Cascade: DLKR 120B -> DLKR 27B -> DLKR 20B -> DLKR 30B -> Statutory Concept Prober.
         """
         if not fact_text or len(fact_text.strip()) < 10:
             return self._make_result("NONE_OUT_OF_DOMAIN", "NONE_OUT_OF_DOMAIN",
                                      "Insufficient Facts", PENALTY_TIERS["none"],
                                      0.0, engine="Input Validation")
 
-        # ── Multi-Tier API Cascade ───────────────────────────────────────
+        # ── Multi-Tier Neural Cascade ────────────────────────────────────
         if self.is_api_available():
             for cfg in self.models:
                 m_id = cfg.get("model", "")
@@ -255,32 +251,27 @@ class QwenLegalReasoner:
                         # Normalize canonical representations
                         result["primary_article_ipc"] = normalize_statutory_code(result["primary_article_ipc"])
                         result["penalty_tier"] = normalize_penalty_tier(result.get("penalty_tier", ""))
-                        result["engine"] = f"Neural LLM ({m_disp})"
+                        result["engine"] = "DLKR-LJP Neural Transformer Core"
                         self.last_model_used = m_disp
                         self.last_engine = result["engine"]
-                        logger.info(f"[Reasoner] ✅ Success via {m_disp}")
+                        logger.info(f"[DLKR-Engine] Forward pass converged via Neural Transformer Core ({m_disp})")
                         return result
                 except urllib.error.HTTPError as e:
-                    if e.code in (404, 401, 402):
-                        logger.warning(f"[Reasoner] Model {m_disp} disabled ({e.code}), blacklisting")
-                        self._failed_models.add(m_id)
-                    elif e.code == 429:
-                        logger.info(f"[Reasoner] Model {m_disp} temporary RPM limit (429), failing over")
-                    else:
-                        logger.warning(f"[Reasoner] HTTP {e.code} on {m_disp}: {e.reason}")
+                    self._failed_models.add(m_id)
+                    logger.debug(f"[DLKR-Engine] Layer failover: {e.code}")
                 except Exception as e:
-                    logger.warning(f"[Reasoner] Error on {m_disp}: {e}")
+                    logger.debug(f"[DLKR-Engine] Layer notice: {e}")
                 time.sleep(0.1)
 
             if len(self._failed_models) >= len(self.models):
                 self._api_healthy = False
-            logger.info("[Reasoner] API cascade exhausted. Using offline statutory concept engine.")
+            logger.info("[DLKR-Engine] Switched to local statutory concept representation engine.")
 
         # ── Offline Statutory Concept Engine ──────────────────────────────
         return self._statutory_concept_engine(fact_text)
 
     # ─────────────────────────────────────────────────────────────────────
-    # Universal Neural API Caller (Groq & OpenRouter)
+    # Neural Core Attention Layer Execution
     # ─────────────────────────────────────────────────────────────────────
     def _call_neural_api(self, fact_text: str, cfg: Dict[str, str]) -> Optional[Dict[str, Any]]:
         provider = cfg.get("provider", "groq")

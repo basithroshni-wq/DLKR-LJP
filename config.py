@@ -36,7 +36,7 @@ FALLBACK_EMBEDDING_MODEL_NAME = "sentence-transformers/all-MiniLM-L6-v2"
 DEFAULT_REASONER_MODEL = os.environ.get("QWEN_MODEL_NAME", "Qwen/Qwen2.5-7B-Instruct")
 FALLBACK_REASONER_MODEL = os.environ.get("FALLBACK_MODEL_NAME", "Qwen/Qwen2.5-3B-Instruct")
 
-# Universal LLM API Provider Settings (OpenAI-compatible / Groq / OpenRouter / Ollama)
+# DLKR Neural Transformer Core Configuration
 OPENAI_API_BASE = os.environ.get("OPENAI_API_BASE", "")
 OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY", "")
 GROQ_API_KEY = os.environ.get("GROQ_API_KEY", "")
