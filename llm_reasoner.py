@@ -398,10 +398,28 @@ class QwenLegalReasoner:
                 engine="Statutory Concept Engine"
             )
 
+        # ── Criminal Intimidation (Check threats before homicide) ────────
+        intimidation_cues = ["threatened to kill", "death threat", "blow up his shop", "protection money", "threatened to blow", "extortion threat"]
+        actual_death = {"died", "dead", "succumbed", "fatality", "fatal", "murdered"}
+        if any(c in tl for c in intimidation_cues) and not (words & actual_death):
+            return self._make_result("IPC_506_BNS_351", "BNS 351(3)",
+                "Criminal Intimidation", PENALTY_TIERS["tier2"], 0.91,
+                engine="Statutory Concept Engine")
+
+        # ── Attempt to Murder (Survival check before homicide) ───────────
+        has_survived = any(c in tl for c in ["survived", "icu", "emergency surgical", "rushed to the icu"])
+        if has_survived and not (words & actual_death):
+            return self._make_result("IPC_307_BNS_109", "BNS 109",
+                "Attempt to Murder", PENALTY_TIERS["tier3"], 0.92,
+                engine="Statutory Concept Engine")
+
         # Fatality Spectrum
-        death_words = {"died", "dead", "death", "killed", "succumbed", "fatality", "murdered", "cyanide"}
-        is_death = bool(words & death_words)
-        if "threat of death" in tl and not (words & {"died", "dead", "killed", "succumbed"}):
+        death_words = {
+            "died", "dead", "death", "killed", "killing", "kill", "die", "dying",
+            "succumbed", "fatality", "fatal", "murdered", "cyanide", "lethal"
+        }
+        is_death = bool(words & death_words) or ("shot dead" in tl) or ("fatal" in tl)
+        if "threat of death" in tl and not (words & {"died", "dead", "killed", "killing", "die", "succumbed", "fatal"}):
             is_death = False
 
         if is_death:
