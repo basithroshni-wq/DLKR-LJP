@@ -261,14 +261,16 @@ class QwenLegalReasoner:
                         logger.info(f"[Reasoner] ✅ Success via {m_disp}")
                         return result
                 except urllib.error.HTTPError as e:
-                    if e.code in (404, 402, 429, 500, 502, 503, 504):
-                        logger.warning(f"[Reasoner] Model {m_disp} unavailable ({e.code}), failing over")
+                    if e.code in (404, 401, 402):
+                        logger.warning(f"[Reasoner] Model {m_disp} disabled ({e.code}), blacklisting")
                         self._failed_models.add(m_id)
+                    elif e.code == 429:
+                        logger.info(f"[Reasoner] Model {m_disp} temporary RPM limit (429), failing over")
                     else:
                         logger.warning(f"[Reasoner] HTTP {e.code} on {m_disp}: {e.reason}")
                 except Exception as e:
                     logger.warning(f"[Reasoner] Error on {m_disp}: {e}")
-                time.sleep(0.15)
+                time.sleep(0.1)
 
             if len(self._failed_models) >= len(self.models):
                 self._api_healthy = False
