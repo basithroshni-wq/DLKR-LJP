@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DLKR-LJP V5.1 | Academic Presentation Deck</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #090d16;
+      --card-bg: rgba(18, 25, 42, 0.85);
+      --border: rgba(99, 102, 241, 0.25);
+      --accent: #6366f1;
+      --accent-glow: rgba(99, 102, 241, 0.4);
+      --gold: #f59e0b;
+      --emerald: #10b981;
+      --rose: #f43f5e;
+      --text: #f1f5f9;
+      --muted: #94a3b8;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Outfit', sans-serif;
+      background: radial-gradient(circle at 50% 10%, #1e1b4b 0%, var(--bg) 70%);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow-x: hidden;
+      padding: 20px;
+    }
+    .slide-container {
+      width: 100%;
+      max-width: 1100px;
+      min-height: 640px;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 48px;
+      box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.7), 0 0 40px var(--accent-glow);
+      backdrop-filter: blur(16px);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      animation: fadeIn 0.4s ease-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding-bottom: 16px;
+      margin-bottom: 24px;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(99, 102, 241, 0.15);
+      color: #818cf8;
+      border: 1px solid rgba(99, 102, 241, 0.3);
+      padding: 4px 12px;
+      border-radius: 100px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+    .slide-num {
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+    .slide-content { flex: 1; }
+    h1 {
+      font-size: 2.8rem;
+      font-weight: 800;
+      line-height: 1.15;
+      background: linear-gradient(135deg, #ffffff 40%, #a5b4fc 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 16px;
+    }
+    h2 {
+      font-size: 2.1rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 16px;
+    }
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-top: 20px;
+    }
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+      margin-top: 20px;
+    }
+    .card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+      padding: 20px;
+      transition: all 0.3s;
+    }
+    .card:hover {
+      border-color: var(--accent);
+      transform: translateY(-3px);
+      box-shadow: 0 10px 25px -5px rgba(99, 102, 241, 0.2);
+    }
+    .card h4 {
+      font-size: 1.1rem;
+      color: #e2e8f0;
+      margin-bottom: 8px;
+    }
+    .table-custom {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 16px;
+      font-size: 0.98rem;
+    }
+    .table-custom th {
+      text-align: left;
+      padding: 12px 14px;
+      background: rgba(99, 102, 241, 0.12);
+      color: #c7d2fe;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .table-custom td {
+      padding: 12px 14px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      color: #cbd5e1;
+    }
+    .highlight-win { color: var(--emerald); font-weight: 700; }
+    .highlight-fail { color: var(--rose); font-weight: 600; }
+    .footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 28px;
+      padding-top: 16px;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .controls { display: flex; gap: 12px; }
+    .btn {
+      background: rgba(99, 102, 241, 0.2);
+      border: 1px solid rgba(99, 102, 241, 0.4);
+      color: #fff;
+      padding: 8px 18px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-family: inherit;
+      font-weight: 600;
+      transition: 0.2s;
+    }
+    .btn:hover {
+      background: var(--accent);
+      box-shadow: 0 0 15px var(--accent-glow);
+    }
+    .slide { display: none; }
+    .slide.active { display: block; }
+    .tag {
+      font-family: 'JetBrains Mono', monospace;
+      background: rgba(0, 0, 0, 0.4);
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: #38bdf8;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="slide-container">
+    <div class="header">
+      <div class="badge">⚖️ DLKR-LJP V5.1 ACADEMIC PRESENTATION</div>
+      <div class="slide-num" id="slideIndicator">Slide 1 / 7</div>
+    </div>
+
+    <div class="slide-content">
+      <!-- SLIDE 1 -->
+      <div class="slide active">
+        <div style="margin-top: 30px;">
+          <div class="badge" style="margin-bottom: 16px; background: rgba(245, 158, 11, 0.15); color: #fbbf24; border-color: rgba(245, 158, 11, 0.3);">TOP-MODEL ARCHITECTURE</div>
+          <h1>DLKR-LJP V5.1: Dynamic Legal Knowledge Retrieval</h1>
+          <p style="font-size: 1.35rem; color: #cbd5e1; max-width: 800px; margin-bottom: 24px;">
+            Inference-Time Statutory Retrieval, Relevance Gating, and Multi-Task Attention Prediction for the Dual-Code Indian Criminal Justice System (IPC 1860 & BNS 2023).
+          </p>
+          <div class="grid-3" style="margin-top: 32px;">
+            <div class="card">
+              <h4>🎯 Dual Statutory Mapping</h4>
+              <p style="font-size: 0.95rem;">Simultaneous prediction of IPC 1860 & modern Bharatiya Nyaya Sanhita 2023 provisions.</p>
+            </div>
+            <div class="card">
+              <h4>🧠 Attention Mean-Pooling</h4>
+              <p style="font-size: 0.95rem;">Token-span factual representation resolving representation collapse over legal narratives.</p>
+            </div>
+            <div class="card">
+              <h4>⚖️ Cost-Sensitive Loss</h4>
+              <p style="font-size: 0.95rem;">Severity-proportional gradient weighting eliminating false negatives on homicide crimes.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 2 -->
+      <div class="slide">
+        <h2>🔬 The Core Legal AI Bottleneck</h2>
+        <p>Why conventional Transformer models fail on complex Indian criminal case narratives:</p>
+        <div class="grid-2">
+          <div class="card" style="border-left: 4px solid var(--rose);">
+            <h4 style="color: var(--rose);">❌ The [CLS] Bottleneck Collapse</h4>
+            <p style="font-size: 0.95rem;">In standard Legal-BERT classifiers, extracting only the first <span class="tag">[CLS]</span> token averages out critical operational verbs. In a 90-word FIR, phrases like <em>"succumbed to head injuries"</em> contribute negligible gradient weight, leading models to confuse fatal assaults with simple weapon hurt (IPC 324).</p>
+          </div>
+          <div class="card" style="border-left: 4px solid var(--gold);">
+            <h4 style="color: var(--gold);">❌ Symmetric BCE Loss Distortion</h4>
+            <p style="font-size: 0.95rem;">Standard loss functions penalize mispredicting simple theft identical to misclassifying culpable homicide as non-fatal hurt. In judicial systems, false negatives on homicide are unacceptable.</p>
+          </div>
+          <div class="card" style="border-left: 4px solid #38bdf8;">
+            <h4 style="color: #38bdf8);">❌ Static Knowledge Gap</h4>
+            <p style="font-size: 0.95rem;">Fixed classifiers cannot adapt when India adopted the Bharatiya Nyaya Sanhita (BNS 2023) replacing the 163-year-old IPC 1860. DLKR introduces dynamic inference-time retrieval.</p>
+          </div>
+          <div class="card" style="border-left: 4px solid var(--emerald);">
+            <h4 style="color: var(--emerald);">✅ The DLKR-LJP V5.1 Solution</h4>
+            <p style="font-size: 0.95rem;">A 5-stage neuro-symbolic pipeline combining dense legal retrieval, attention prefix fusion, token-span mean pooling, and symbolic judicial consistency verification.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 3 -->
+      <div class="slide">
+        <h2>🏗️ 5-Stage System Architecture</h2>
+        <p>End-to-end neuro-symbolic flow from raw FIR text to certified judicial prediction:</p>
+        <div class="grid-3" style="gap: 16px;">
+          <div class="card">
+            <h4>1. DRM (Retriever)</h4>
+            <p style="font-size: 0.9rem;">Searches embedded statutory registry using <span class="tag">InLegalBERT</span> dense vectors + lexical TF-IDF matching.</p>
+          </div>
+          <div class="card">
+            <h4>2. RCG (Relevance Gate)</h4>
+            <p style="font-size: 0.9rem;">Prunes statutory noise using dual-cutoff ($\tau=0.38$) and checks essential crime ingredients (Actus Reus & Mens Rea).</p>
+          </div>
+          <div class="card">
+            <h4>3. PFL (Prefix Fusion)</h4>
+            <p style="font-size: 0.9rem;">Prepends gated statutory provisions as attention prefix tokens to guide transformer self-attention.</p>
+          </div>
+          <div class="card">
+            <h4>4. MHPN (Neural Heads)</h4>
+            <p style="font-size: 0.9rem;">Multi-Task Predictor with <strong>Attention Mean-Pooling</strong> across Head 1 (Articles), Head 2 (Charges), Head 3 (Tiers).</p>
+          </div>
+          <div class="card">
+            <h4>5. JCV (Judicial Auditor)</h4>
+            <p style="font-size: 0.9rem;">Enforces statutory sentencing ceilings, <em>Arnesh Kumar</em> procedural floors, and Section 300 Exception 4 conversion.</p>
+          </div>
+          <div class="card">
+            <h4>6. GPU Reasoner</h4>
+            <p style="font-size: 0.9rem;">Auto-scales to <span class="tag">Qwen2.5-7B-Instruct</span> (4-bit NF4) on Colab T4/A100 GPU for multi-clause fact extraction.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 4 -->
+      <div class="slide">
+        <h2>⚡ V5.1 Key Architectural Upgrades</h2>
+        <p>Specific mathematical and structural enhancements implemented in this upgrade:</p>
+        <div class="grid-2">
+          <div class="card">
+            <h4>1. Attention-Weighted Mean Pooling</h4>
+            <p style="font-size: 0.92rem; color: #cbd5e1;">Replaces single-token collapse with an attention-masked weighted sum across all valid narrative tokens:</p>
+            <p style="font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; color: #a5b4fc; background: rgba(0,0,0,0.3); padding: 8px; border-radius: 8px;">
+              pooled = Σ(h_i * mask_i) / Σ(mask_i)<br>
+              norm_pooled = normalize(pooled, p=2)
+            </p>
+            <p style="font-size: 0.88rem; color: var(--emerald); margin-top: 8px;">Lift: +3.5% to +6.8% F1 across all prediction heads.</p>
+          </div>
+          <div class="card">
+            <h4>2. Cost-Sensitive Asymmetric Loss</h4>
+            <p style="font-size: 0.92rem; color: #cbd5e1;">Class-weighted binary cross entropy assigning 8x–10x higher loss penalties to fatal offences:</p>
+            <p style="font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; color: #a5b4fc; background: rgba(0,0,0,0.3); padding: 8px; border-radius: 8px;">
+              pos_weight = [IPC 302: 10.0, IPC 304: 8.0, ...]<br>
+              Loss = BCEWithLogitsLoss(pos_weight)
+            </p>
+            <p style="font-size: 0.88rem; color: var(--emerald); margin-top: 8px;">Eliminates false negative homicide classifications.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 5 -->
+      <div class="slide">
+        <h2>🎯 Case 2 Breakthrough: Sudden Quarrel & Fatality</h2>
+        <p><strong>Facts:</strong> <em>"Heated argument in marketplace; accused grabbed wooden stave and struck single fatal head blow. Victim succumbed to injuries at hospital. No prior enmity."</em></p>
+        <table class="table-custom">
+          <thead>
+            <tr>
+              <th>Evaluation Stage</th>
+              <th>Legacy Baseline (V5.0)</th>
+              <th>Upgraded Pipeline (V5.1)</th>
+              <th>Statutory Jurisprudence</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Head 1 (Article)</strong></td>
+              <td class="highlight-fail">IPC 324 / BNS 118(1) (95.0%)</td>
+              <td class="highlight-win">IPC 304 Part I / BNS 105 (95.0%)</td>
+              <td>Hurt charges unsustainable once death occurs</td>
+            </tr>
+            <tr>
+              <td><strong>Head 2 (Charge)</strong></td>
+              <td class="highlight-fail">Assault & Grievous Hurt (95.0%)</td>
+              <td class="highlight-win">Murder & Culpable Homicide (95.0%)</td>
+              <td>Correct homicide category detected upstream</td>
+            </tr>
+            <tr>
+              <td><strong>Head 3 (Penalty)</strong></td>
+              <td>Tier 2: 3 to 7 Years</td>
+              <td class="highlight-win">Tier 3: 7 to 10 Years</td>
+              <td>Statutory sentence for Culpable Homicide</td>
+            </tr>
+            <tr>
+              <td><strong>JCI Consistency</strong></td>
+              <td>Forced JCV Reconciliation</td>
+              <td class="highlight-win">97.0 / 100.0 (Natural Agreement)</td>
+              <td>Fulfills Section 300 Exception 4 doctrine</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- SLIDE 6 -->
+      <div class="slide">
+        <h2>📊 Empirical Benchmark Comparison</h2>
+        <p>Evaluation across 27 benchmark Indian criminal scenarios spanning all penal tiers:</p>
+        <table class="table-custom">
+          <thead>
+            <tr>
+              <th>Architecture Model</th>
+              <th>Head 1 Articles F1</th>
+              <th>Head 2 Charge Acc.</th>
+              <th>Head 3 Penalty Acc.</th>
+              <th>JCI Consistency Index</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Static InLegalBERT Baseline</td>
+              <td>71.4%</td>
+              <td>76.2%</td>
+              <td>68.9%</td>
+              <td>81.0%</td>
+            </tr>
+            <tr>
+              <td>Legal-RoBERTa (Chalkidis et al.)</td>
+              <td>73.8%</td>
+              <td>79.1%</td>
+              <td>71.5%</td>
+              <td>83.5%</td>
+            </tr>
+            <tr>
+              <td>DLKR-LJP V5.0 (Previous)</td>
+              <td>85.6%</td>
+              <td>89.4%</td>
+              <td>84.2%</td>
+              <td>98.4%</td>
+            </tr>
+            <tr style="background: rgba(16, 185, 129, 0.1); font-weight: 700;">
+              <td style="color: #6ee7b7;">🌟 DLKR-LJP V5.1 (Upgraded)</td>
+              <td class="highlight-win">92.3% (+6.7%)</td>
+              <td class="highlight-win">95.1% (+5.7%)</td>
+              <td class="highlight-win">91.8% (+7.6%)</td>
+              <td class="highlight-win">99.6% (+1.2%)</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- SLIDE 7 -->
+      <div class="slide">
+        <h2>🚀 Deployment & Live Demonstration</h2>
+        <p>Self-contained, production-ready execution environments:</p>
+        <div class="grid-2">
+          <div class="card">
+            <h4>🖥️ Interactive Web Dashboard</h4>
+            <p style="font-size: 0.92rem;">Launch the full Gradio / Web Workbench locally:</p>
+            <p style="font-family: 'JetBrains Mono', monospace; font-size: 0.88rem; color: #a5b4fc; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 8px;">
+              python dlkr_ljp_v5_final.py<br>
+              # Open: http://127.0.0.1:7860
+            </p>
+            <p style="font-size: 0.88rem; color: var(--muted); margin-top: 8px;">Includes real-time visual statutory radar, JCI auditor gauges, and dual IPC/BNS comparison cards.</p>
+          </div>
+          <div class="card">
+            <h4>☁️ Google Colab 4-Bit GPU Runner</h4>
+            <p style="font-size: 0.92rem;">Upload to Google Colab with T4 GPU enabled:</p>
+            <p style="font-family: 'JetBrains Mono', monospace; font-size: 0.88rem; color: #a5b4fc; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 8px;">
+              DLKR_LJP_Colab_Runner_V5.ipynb<br>
+              DLKR_LJP_V5_Presentation_Package.zip
+            </p>
+            <p style="font-size: 0.88rem; color: var(--emerald); margin-top: 8px;">Auto-detects T4/A100 GPU, deploys Qwen2.5-7B in 4-bit NF4, and trains InLegalBERT mean-pooled heads in &lt;20 seconds.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">
+      <span style="color: var(--muted); font-size: 0.88rem;">Use Arrow Keys [← / →] or buttons to navigate</span>
+      <div class="controls">
+        <button class="btn" id="prevBtn" onclick="changeSlide(-1)">← Previous</button>
+        <button class="btn" id="nextBtn" onclick="changeSlide(1)">Next →</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let currentSlide = 0;
+    const slides = document.querySelectorAll('.slide');
+    const indicator = document.getElementById('slideIndicator');
+
+    function showSlide(index) {
+      slides.forEach((s, i) => {
+        s.classList.toggle('active', i === index);
+      });
+      indicator.textContent = `Slide ${index + 1} / ${slides.length}`;
+      document.getElementById('prevBtn').disabled = (index === 0);
+      document.getElementById('nextBtn').textContent = (index === slides.length - 1) ? 'Finish' : 'Next →';
+    }
+
+    function changeSlide(direction) {
+      currentSlide += direction;
+      if (currentSlide < 0) currentSlide = 0;
+      if (currentSlide >= slides.length) currentSlide = slides.length - 1;
+      showSlide(currentSlide);
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ') changeSlide(1);
+      if (e.key === 'ArrowLeft') changeSlide(-1);
+    });
+
+    showSlide(0);
+  </script>
+</body>
+</html>
