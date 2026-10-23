@@ -2053,25 +2053,24 @@ class PretrainedLegalReasoner:
         return facts
 
     def comprehend_and_reason(self, fact_text: str, fallback_extractor: Optional[AtomicLegalFactExtractor] = None) -> Tuple[AtomicCaseFacts, Dict[str, Any]]:
-        # 1. Primary Priority: Deep Neural Transformer Core (Zero-Shot Neural Reasoner)
-        # Directly adopts neural statutory sections without regex interference!
-        if self.api_client.is_available():
-            try:
-                parsed = self.api_client.reason(fact_text)
-                if parsed and (parsed.get("primary_article_ipc") or parsed.get("primary_article_bns")):
-                    facts = AtomicCaseFacts(raw_text=fact_text)
-                    facts = self._sync_facts_from_llm(facts, parsed)
-                    facts.is_out_of_domain = bool(parsed.get("is_out_of_domain", False))
-                    parsed["ratio_decidendi"] = parsed.get("judicial_ratio", "")
-                    return facts, parsed
-            except Exception as e:
-                logger.info(f"[Neural Core] Deferred to local engine: {e}")
-
-        # Fallback to local deterministic extractor ONLY if Neural Core is unavailable or quota exceeded
+        # Ground factual representation with rule-based ingredients first
         if fallback_extractor:
             facts = fallback_extractor.extract(fact_text)
         else:
             facts = AtomicLegalFactExtractor().extract(fact_text)
+
+        # 1. Primary Priority: Deep Neural Transformer Core (Zero-Shot Neural Reasoner)
+        if self.api_client.is_available():
+            try:
+                parsed = self.api_client.reason(fact_text)
+                if parsed and (parsed.get("primary_article_ipc") or parsed.get("primary_article_bns")):
+                    facts = self._sync_facts_from_llm(facts, parsed)
+                    if "is_out_of_domain" in parsed:
+                        facts.is_out_of_domain = bool(parsed["is_out_of_domain"])
+                    parsed["ratio_decidendi"] = parsed.get("judicial_ratio", "")
+                    return facts, parsed
+            except Exception as e:
+                logger.info(f"[Neural Core] Deferred to local engine: {e}")
 
         # 2. Second priority: Local 4-bit Neural LLM on GPU (if loaded)
         if self.is_loaded and self.pipeline:
@@ -3824,6 +3823,10 @@ class MultiTaskLegalPredictor:
                 reasoner_art = "IPC_468_BNS_336"
 
         is_exc4 = atomic_facts.is_heat_of_passion or atomic_facts.is_sudden_fight or (atomic_facts.single_blow and atomic_facts.weapon_source == "Found at Spot / Casual")
+        if is_exc4 and atomic_facts.injury_severity == "Fatal (Death)":
+            if reasoner_art in ("IPC_302_BNS_103", "", None):
+                reasoner_art = "IPC_304_PART2_BNS_105"
+                reasoner_chg = "Culpable Homicide Not Amounting to Murder"
 
         # ---------------- HEAD 1: LAW ARTICLES ----------------
         article_preds: List[Dict[str, Any]] = []
@@ -4020,7 +4023,7 @@ class MultiTaskLegalPredictor:
                     prob = (0.40 * s_fact) + (0.30 * s_gate) + (0.20 * s_reasoner) + (0.10 * s_neural)
                     prob = min(prob, 0.30)
 
-            if art == reasoner_art:
+            if art == reasoner_art and not (is_exc4 and "302" in art_upper):
                 prob = max(prob, 0.95)
 
             prob = min(0.98, max(0.01, prob))

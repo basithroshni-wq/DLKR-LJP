@@ -164,6 +164,14 @@ def normalize_statutory_code(code: str) -> str:
     if c_upper.startswith("IPC_") or c_upper.startswith("NONE_"):
         return c_upper
 
+    # Civil dispute / quashing detection
+    if any(k in c_upper for k in ["CIVIL", "482", "528", "CONTRACT", "ARBITRATION", "QUASH"]):
+        return "NONE_CIVIL_DISPUTE"
+
+    # Out of domain / non-cognizable
+    if any(k in c_upper for k in ["OUT_OF_DOMAIN", "NON_LEGAL", "NON-LEGAL", "RECIPE", "INSUFFICIENT"]):
+        return "NONE_OUT_OF_DOMAIN"
+
     # Check key matches
     for key, canonical in CANONICAL_IPC_MAP.items():
         if key in c_upper:
