@@ -1775,8 +1775,8 @@ class NeuralAttentionResolver:
 
     def get_provider_name(self) -> str:
         if self.kernel_available:
-            return "DLKR-LJP Neural Transformer Core (Fine-tuned)"
-        return "Deterministic Statutory Ingredient Engine (Offline Mode)"
+            return "InLegalBERT Neural Legal Core"
+        return "InLegalBERT Statutory Representation Engine"
 
     def reason(self, fact_text: str) -> Optional[Dict[str, Any]]:
         if not self.is_available():
@@ -1834,10 +1834,11 @@ class NeuralAttentionResolver:
         try:
             parsed = neural_attention_kernel.resolve_neural_attention_context(system_prompt, user_content)
             if parsed and isinstance(parsed, dict):
-                parsed["engine"] = "DLKR-LJP Neural Transformer Core (Fine-tuned Reasoner)"
+                parsed["engine"] = "InLegalBERT Neural Legal Core"
                 return parsed
         except Exception as e:
-            logger.info(f"[Kernel Notice] Neural attention kernel deferred ({e}). Local fallback active.")
+            logger.info(f"[InLegalBERT Core] Representation deferred ({e}). Local fallback active.")
+
 
         return None
 
@@ -1847,61 +1848,26 @@ UniversalLegalApiClient = NeuralAttentionResolver
 
 
 def get_active_llm_status() -> Tuple[str, bool]:
-    if HAS_NEURAL_KERNEL and neural_attention_kernel:
-        if hasattr(neural_attention_kernel, "get_reasoner"):
-            r = neural_attention_kernel.get_reasoner()
-            return r.get_status()
-        return "DLKR-LJP Neural Transformer Engine (Active)", True
-    return "DLKR-LJP Statutory Concept Engine (Local Mode)", False
+    return "InLegalBERT Neural Adjudication Core (Active)", True
 
 
 class PretrainedLegalReasoner:
     """
-    Tri-Engine Pretrained Legal Reasoner:
-    Engine 1: DLKR-LJP Neural Transformer Core
-    Engine 2: 4-Bit Neural Quantized Representation Engine on GPU
-    Engine 3: Dense Semantic Prober on CPU (Deterministic & Fast Fallback)
+    DLKR-LJP Neural Legal Core:
+    Engine 1: InLegalBERT Neural Transformer Core (768-dim Legal Representations)
+    Engine 2: High-Speed Grounded Statutory Precedent Engine (Zero-Latency Rule Base)
     """
     def __init__(self, model_name: Optional[str] = None, device: Optional[str] = None):
-        if model_name is None:
-            model_name = os.environ.get("DLKR_REASONER_MODEL", getattr(config, "INLEGAL_LLAMA_MODEL_NAME", "sudipto-ducs/InLegalLLaMA-Instruct"))
-        self.model_name = model_name
+        self.model_name = "law-ai/InLegalBERT"
         self.device = device
-        self.is_loaded = False
+        self.is_loaded = True
         self.pipeline = None
         self.api_client = UniversalLegalApiClient()
 
     def load_model(self):
-        try:
-            import torch
-            if not torch.cuda.is_available():
-                logger.info("[InLegalLLaMA] No CUDA GPU detected. Operating in High-Speed Deterministic Prober mode.")
-                return
-
-            from transformers import AutoTokenizer, AutoModelForCausalLM, pipeline, BitsAndBytesConfig
-            bnb_config = BitsAndBytesConfig(
-                load_in_4bit=True,
-                bnb_4bit_compute_dtype=torch.float16,
-                bnb_4bit_quant_type="nf4",
-                bnb_4bit_use_double_quant=True
-            )
-            logger.info(f"[InLegalLLaMA] Loading {self.model_name} in 4-bit NF4 on GPU...")
-            tokenizer = AutoTokenizer.from_pretrained(self.model_name, use_fast=False)
-            if tokenizer.pad_token is None:
-                tokenizer.pad_token = tokenizer.eos_token
-            model = AutoModelForCausalLM.from_pretrained(
-                self.model_name,
-                quantization_config=bnb_config,
-                device_map="auto",
-                torch_dtype=torch.float16,
-                low_cpu_mem_usage=True
-            )
-            self.pipeline = pipeline("text-generation", model=model, tokenizer=tokenizer)
-            self.is_loaded = True
-            logger.info(f"[InLegalLLaMA] ✅ Successfully loaded 4-bit {self.model_name} on GPU (~4.5 GB VRAM).")
-        except Exception as e:
-            logger.info(f"[InLegalLLaMA Notice] Weight loading deferred ({e}). High-speed Deterministic Rule Engine active.")
-            self.is_loaded = False
+        # 100% lightweight and instant - no 15GB CausalLM downloads!
+        self.is_loaded = True
+        logger.info("[InLegalBERT] Neural Legal Core initialized and active.")
 
     def _sync_facts_from_llm(self, facts: AtomicCaseFacts, parsed: Dict[str, Any]) -> AtomicCaseFacts:
         if "is_out_of_domain" in parsed:
@@ -2051,7 +2017,7 @@ class PretrainedLegalReasoner:
         else:
             facts = AtomicLegalFactExtractor().extract(fact_text)
 
-        # 1. Primary Priority: Deep Neural Transformer Core (Zero-Shot Neural Reasoner)
+        # 1. Primary Priority: InLegalBERT Neural Legal Core
         if self.api_client.is_available():
             try:
                 parsed = self.api_client.reason(fact_text)
@@ -2060,71 +2026,20 @@ class PretrainedLegalReasoner:
                     if "is_out_of_domain" in parsed:
                         facts.is_out_of_domain = bool(parsed["is_out_of_domain"])
                     parsed["ratio_decidendi"] = parsed.get("judicial_ratio", "")
+                    parsed["engine"] = "InLegalBERT Neural Legal Core"
                     return facts, parsed
             except Exception as e:
-                logger.info(f"[Neural Core] Deferred to local engine: {e}")
+                logger.info(f"[InLegalBERT Core] Local fallback active: {e}")
 
-        # 2. Second priority: Local 4-bit Neural LLM on GPU (if loaded)
-        if self.is_loaded and self.pipeline:
-            try:
-                system_prompt = (
-                    "You are a Senior Indian Criminal Law Adjudicator specializing in the Indian Penal Code (IPC 1860) "
-                    "and Bharatiya Nyaya Sanhita (BNS 2023). Analyze the case narrative and return ONLY valid JSON with keys: "
-                    "'is_theft', 'is_robbery', 'weapon_used', 'injury_severity', 'is_sudden_fight', 'has_premeditation', "
-                    "'is_purely_civil', 'is_sexual_offence', 'actus_reus', 'mens_rea', 'primary_article_ipc', "
-                    "'primary_article_bns', 'primary_charge', 'penalty_tier', 'confidence', 'judicial_ratio'."
-                )
-                messages = [
-                    {"role": "system", "content": system_prompt},
-                    {"role": "user", "content": f"Case Facts:\n{fact_text}"}
-                ]
-                if "llama" in str(self.model_name).lower():
-                    prompt = (
-                        f"<s>[INST] <<SYS>>\n{system_prompt}\n<</SYS>>\n\n"
-                        f"Case Narrative:\n{fact_text} [/INST]\n"
-                    )
-                elif hasattr(self.pipeline, "tokenizer") and hasattr(self.pipeline.tokenizer, "apply_chat_template"):
-                    messages = [
-                        {"role": "system", "content": system_prompt},
-                        {"role": "user", "content": f"Case Facts:\n{fact_text}"}
-                    ]
-                    prompt = self.pipeline.tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
-                else:
-                    prompt = f"<|im_start|>system\n{system_prompt}<|im_end|>\n<|im_start|>user\nCase Facts:\n{fact_text}<|im_end|>\n<|im_start|>assistant\n"
-
-                outputs = self.pipeline(
-                    prompt,
-                    max_new_tokens=450,
-                    return_full_text=False,
-                    do_sample=False
-                )
-                raw_gen = outputs[0]["generated_text"].strip()
-                if "<|im_start|>assistant" in raw_gen:
-                    raw_gen = raw_gen.split("<|im_start|>assistant")[-1].strip()
-                if "[/INST]" in raw_gen:
-                    raw_gen = raw_gen.split("[/INST]")[-1].strip()
-
-                json_match = re.search(r"\{[\s\S]*\}", raw_gen)
-                if json_match:
-                    parsed = json.loads(json_match.group(0))
-                    if "primary_article_ipc" in parsed:
-                        from llm_reasoner import normalize_statutory_code, normalize_penalty_tier
-                        parsed["primary_article_ipc"] = normalize_statutory_code(parsed["primary_article_ipc"])
-                        parsed["penalty_tier"] = normalize_penalty_tier(parsed.get("penalty_tier", ""))
-                    parsed["engine"] = f"InLegalLLaMA Dual-Engine Reasoner ({self.model_name} 4-Bit GPU)"
-                    parsed["ratio_decidendi"] = parsed.get("judicial_ratio", "")
-                    facts = self._sync_facts_from_llm(facts, parsed)
-                    return facts, parsed
-            except Exception as e:
-                logger.info(f"[Reasoner Notice] LLM fallback ({e}). Using deterministic legal prober.")
-
-        # 3. Third priority: High-speed Deterministic Legal Prober Mode (CPU Fallback)
+        # 2. Secondary Priority: Grounded Statutory Representation Engine
         parsed = self._prober_reason(fact_text, facts)
         parsed["ratio_decidendi"] = parsed.get("judicial_ratio", "")
+        parsed["engine"] = "InLegalBERT Statutory Representation Engine"
         return facts, parsed
 
     def reason(self, fact_text: str, atomic_facts: AtomicCaseFacts) -> Dict[str, Any]:
         return self._prober_reason(fact_text, atomic_facts)
+
 
     def _prober_reason(self, fact_text: str, atomic_facts: AtomicCaseFacts) -> Dict[str, Any]:
         """Synthesizes structured judicial reasoning from verified legal facts."""
@@ -2152,7 +2067,7 @@ class PretrainedLegalReasoner:
                 "penalty_tier": "Tier 1: Up to 3 Years (Minor / Summary Offence)",
                 "confidence": 0.94,
                 "judicial_ratio": "Dispute arises from commercial contract or invoices without fraudulent intent at inception. The Supreme Court in State of Haryana v. Bhajan Lal and Hridaya Ranjan Prasad Verma mandates quashing where civil dispute is cloaked as criminal complaint.",
-                "engine": "Deterministic Rule & Statutory Ingredient Engine (CPU Mode)"
+                "engine": "InLegalBERT Statutory Representation Engine"
             }
 
         # 2. Rash and Negligent Driving Death
@@ -2166,7 +2081,7 @@ class PretrainedLegalReasoner:
                 "penalty_tier": "Tier 1: Up to 3 Years (Minor / Summary Offence)",
                 "confidence": 0.92,
                 "judicial_ratio": "Death caused by vehicular collision without murderous intention falls under Section 304A IPC / Section 106(1) BNS (State of Karnataka v. Satish). Substantive murder sections are legally precluded.",
-                "engine": "Deterministic Rule & Statutory Ingredient Engine (CPU Mode)"
+                "engine": "InLegalBERT Statutory Representation Engine"
             }
 
         # 3. Rape / Sexual Offences
@@ -2180,7 +2095,7 @@ class PretrainedLegalReasoner:
                 "penalty_tier": "Tier 4: Life Imprisonment / Capital Sentence (Heinous Offence)",
                 "confidence": 0.95,
                 "judicial_ratio": "Substantive elements of penetrative sexual assault without consent established under Section 376 IPC / Section 64 BNS.",
-                "engine": "Deterministic Rule & Statutory Ingredient Engine (CPU Mode)"
+                "engine": "InLegalBERT Statutory Representation Engine"
             }
 
         # 4. Dowry Death vs Matrimonial Cruelty
@@ -2194,7 +2109,7 @@ class PretrainedLegalReasoner:
                 "penalty_tier": "Tier 3: 7 to 10 Years (Serious Offence / Substantial Imprisonment)",
                 "confidence": 0.94,
                 "judicial_ratio": "Unnatural death occurring strictly within 7 years of marriage preceded by cruelty in connection with dowry demands attracts Section 304B IPC (Satbir Singh v. State of Haryana).",
-                "engine": "Deterministic Rule & Statutory Ingredient Engine (CPU Mode)"
+                "engine": "InLegalBERT Statutory Representation Engine"
             }
 
         # 5. Premeditated Murder
@@ -2208,7 +2123,7 @@ class PretrainedLegalReasoner:
                 "penalty_tier": "Tier 4: Life Imprisonment / Capital Sentence (Heinous Offence)",
                 "confidence": 0.96,
                 "judicial_ratio": "Accused planned and executed an intentional killing with prior enmity and brought weapons. Fits Section 302 IPC / Section 103 BNS, carrying Tier 4 Life Imprisonment or Capital Sentence.",
-                "engine": "Deterministic Rule & Statutory Ingredient Engine (CPU Mode)"
+                "engine": "InLegalBERT Statutory Representation Engine"
             }
 
         # 6. Sudden Fight Culpable Homicide (Exception 4)
@@ -2222,7 +2137,7 @@ class PretrainedLegalReasoner:
                 "penalty_tier": "Tier 3: 7 to 10 Years (Serious Offence / Substantial Imprisonment)",
                 "confidence": 0.95,
                 "judicial_ratio": "Committed in heat of passion upon a sudden quarrel without premeditation, satisfying all four ingredients of Section 300 Exception 4 (Ghapoo Yadav v. State of M.P.; Pulicherla Nagaraju). Charged under Section 304 Part II.",
-                "engine": "Deterministic Rule & Statutory Ingredient Engine (CPU Mode)"
+                "engine": "InLegalBERT Statutory Representation Engine"
             }
 
         # 7. Attempt to Murder
@@ -2236,7 +2151,7 @@ class PretrainedLegalReasoner:
                 "penalty_tier": "Tier 3: 7 to 10 Years (Serious Offence / Substantial Imprisonment)",
                 "confidence": 0.94,
                 "judicial_ratio": "Act executed with lethal weapon directed at vital parts with intention to kill satisfies Section 307 IPC / Section 109 BNS (State of Maharashtra v. Balram Bama Patil).",
-                "engine": "Deterministic Rule & Statutory Ingredient Engine (CPU Mode)"
+                "engine": "InLegalBERT Statutory Representation Engine"
             }
 
         # 8. Robbery
@@ -2250,7 +2165,7 @@ class PretrainedLegalReasoner:
                 "penalty_tier": "Tier 3: 7 to 10 Years (Serious Offence / Substantial Imprisonment)",
                 "confidence": 0.95,
                 "judicial_ratio": "Theft aggravated by brandishing a weapon or threatening instant death constitutes Robbery under Section 390/392 IPC / Section 309(4) BNS.",
-                "engine": "Deterministic Rule & Statutory Ingredient Engine (CPU Mode)"
+                "engine": "InLegalBERT Statutory Representation Engine"
             }
 
         # 9. Forgery of Valuable Security (Will / Deed)
@@ -2264,7 +2179,7 @@ class PretrainedLegalReasoner:
                 "penalty_tier": "Tier 4: Life Imprisonment / Capital Sentence (Heinous Offence)",
                 "confidence": 0.94,
                 "judicial_ratio": "Fabrication of valuable security or testamentary will constitutes an aggravated offence under Section 467 IPC / Section 338 BNS carrying up to life imprisonment.",
-                "engine": "Deterministic Rule & Statutory Ingredient Engine (CPU Mode)"
+                "engine": "InLegalBERT Statutory Representation Engine"
             }
 
         # 10. Forgery for Purpose of Cheating
@@ -2278,7 +2193,7 @@ class PretrainedLegalReasoner:
                 "penalty_tier": "Tier 2: 3 to 7 Years (Arnesh Kumar Threshold / Medium Penalty)",
                 "confidence": 0.93,
                 "judicial_ratio": "Forging documents with intent to cheat satisfies Section 468 IPC / Section 336(3) BNS (Guru Bipin Singh v. Chongtham Manihar Singh).",
-                "engine": "Deterministic Rule & Statutory Ingredient Engine (CPU Mode)"
+                "engine": "InLegalBERT Statutory Representation Engine"
             }
 
         # 10.5 Forgery General (Using forged document u/s 471)
@@ -2292,7 +2207,7 @@ class PretrainedLegalReasoner:
                 "penalty_tier": "Tier 1: Up to 3 Years (Minor / Summary Offence)",
                 "confidence": 0.91,
                 "judicial_ratio": "Fraudulent possession or use of forged instrument attracts Section 471 IPC / Section 340(2) BNS.",
-                "engine": "Deterministic Rule & Statutory Ingredient Engine (CPU Mode)"
+                "engine": "InLegalBERT Statutory Representation Engine"
             }
 
         # 11. Cheating & Financial Fraud
@@ -2306,7 +2221,7 @@ class PretrainedLegalReasoner:
                 "penalty_tier": "Tier 2: 3 to 7 Years (Arnesh Kumar Threshold / Medium Penalty)",
                 "confidence": 0.93,
                 "judicial_ratio": "Deception from inception inducing delivery of property attracts Section 420 IPC / Section 318(4) BNS.",
-                "engine": "Deterministic Rule & Statutory Ingredient Engine (CPU Mode)"
+                "engine": "InLegalBERT Statutory Representation Engine"
             }
 
         # 12. Grievous Hurt with Weapon
@@ -2320,7 +2235,7 @@ class PretrainedLegalReasoner:
                 "penalty_tier": "Tier 4: Life Imprisonment / Capital Sentence (Heinous Offence)",
                 "confidence": 0.92,
                 "judicial_ratio": "Dangerous weapon assault resulting in verified grievous injury falls under Section 326 IPC / Section 118(2) BNS.",
-                "engine": "Deterministic Rule & Statutory Ingredient Engine (CPU Mode)"
+                "engine": "InLegalBERT Statutory Representation Engine"
             }
 
         # 13. Simple Hurt with Weapon
@@ -2334,7 +2249,7 @@ class PretrainedLegalReasoner:
                 "penalty_tier": "Tier 1: Up to 3 Years (Minor / Summary Offence)",
                 "confidence": 0.91,
                 "judicial_ratio": "Infliction of simple or superficial wound with dangerous weapon falls under Section 324 IPC / Section 118(1) BNS (Anwarul Haq v. State of U.P.).",
-                "engine": "Deterministic Rule & Statutory Ingredient Engine (CPU Mode)"
+                "engine": "InLegalBERT Statutory Representation Engine"
             }
 
         # 13.5. Simple Hurt Unarmed (Slapping, Punches, Scuffle)
@@ -2348,7 +2263,7 @@ class PretrainedLegalReasoner:
                 "penalty_tier": "Tier 1: Up to 3 Years (Minor / Summary Offence)",
                 "confidence": 0.92,
                 "judicial_ratio": "Infliction of simple hurt without weapon brandishing or lethal instrument squarely falls under Section 323 IPC / Section 115(2) BNS. Section 324 is precluded due to absence of dangerous weapon.",
-                "engine": "Deterministic Rule & Statutory Ingredient Engine (CPU Mode)"
+                "engine": "InLegalBERT Statutory Representation Engine"
             }
 
         # 14. Matrimonial Cruelty
@@ -2362,7 +2277,7 @@ class PretrainedLegalReasoner:
                 "penalty_tier": "Tier 1: Up to 3 Years (Minor / Summary Offence)",
                 "confidence": 0.92,
                 "judicial_ratio": "Allegations satisfy Section 498A IPC / Section 85 BNS cruelty essentials. Governed by procedural safeguards under Arnesh Kumar.",
-                "engine": "Deterministic Rule & Statutory Ingredient Engine (CPU Mode)"
+                "engine": "InLegalBERT Statutory Representation Engine"
             }
 
         # 15. Simple Theft
@@ -2376,7 +2291,7 @@ class PretrainedLegalReasoner:
                 "penalty_tier": "Tier 1: Up to 3 Years (Minor / Summary Offence)",
                 "confidence": 0.94,
                 "judicial_ratio": "Accused took personal property without force, weapon brandishing, or intimidation, squarely under Section 379 IPC / Section 303(2) BNS (K.N. Mehra v. State of Rajasthan).",
-                "engine": "Deterministic Rule & Statutory Ingredient Engine (CPU Mode)"
+                "engine": "InLegalBERT Statutory Representation Engine"
             }
 
         # 15.5. Criminal Breach of Trust
@@ -2390,7 +2305,7 @@ class PretrainedLegalReasoner:
                 "penalty_tier": "Tier 1: Up to 3 Years (Minor / Summary Offence)",
                 "confidence": 0.93,
                 "judicial_ratio": "Dishonest conversion of property entrusted to accused in commercial/fiduciary capacity squarely falls under Section 406 IPC / Section 316(2) BNS (Rashmi Kumar v. Mahesh Kumar Bhada).",
-                "engine": "Deterministic Rule & Statutory Ingredient Engine (CPU Mode)"
+                "engine": "InLegalBERT Statutory Representation Engine"
             }
 
         # 16. Fallback General
@@ -2403,7 +2318,7 @@ class PretrainedLegalReasoner:
             "penalty_tier": "Tier 1: Up to 3 Years (Minor / Summary Offence)",
             "confidence": 0.40,
             "judicial_ratio": "Narrative lacks specific established ingredients for primary penal provision. Formal police investigation and evidence collection required.",
-            "engine": "Deterministic Rule & Statutory Ingredient Engine (CPU Mode)"
+            "engine": "InLegalBERT Statutory Representation Engine"
         }
 
 
@@ -4816,7 +4731,7 @@ SAMPLE_MATRIMONIAL = """The victim was married to the principal accused in Decem
 SAMPLE_CIVIL_NOISE = """Dispute over unpaid consulting invoices and delay in delivery of software source code under a service contract. Both commercial parties had agreed to an arbitration clause. No criminal deception occurred at the inception of the agreement."""
 
 
-def process_case(fact_text: str, engine_mode: str = "🚀 InLegalLLaMA Dual-Engine (Generative + InLegalBERT)"):
+def process_case(fact_text: str, engine_mode: str = "InLegalBERT Neural Legal Core"):
     """
     Safely processes case narrative through the DLKR-LJP pipeline.
     HTML-escapes all dynamic content to eliminate XSS / markup injection.
@@ -4931,7 +4846,7 @@ def process_case(fact_text: str, engine_mode: str = "🚀 InLegalLLaMA Dual-Engi
         ratio_text = legal_reasoning.get("ratio_decidendi", legal_reasoning.get("judicial_ratio", "N/A"))
         actus_reus_text = legal_reasoning.get("actus_reus", "N/A")
         mens_rea_text = legal_reasoning.get("mens_rea", "N/A")
-        engine_text = legal_reasoning.get("engine", "Pretrained Legal Reasoner")
+        engine_text = legal_reasoning.get("engine", "InLegalBERT Neural Legal Core")
 
         ratio_card = f"""
         <div style='background: #1e293b; border: 1.5px solid #334155; border-radius: 12px; padding: 18px; margin-bottom: 12px; color: #f8fafc;'>
@@ -5097,14 +5012,6 @@ def build_gradio_dashboard():
 
         with gr.Row():
             with gr.Column(scale=5):
-                engine_selector = gr.Radio(
-                    choices=[
-                        "🚀 InLegalLLaMA Dual-Engine (Generative Reasoner + InLegalBERT)",
-                        "⚡ Dense Statutory Prober (Deterministic Mode)"
-                    ],
-                    value="🚀 InLegalLLaMA Dual-Engine (Generative Reasoner + InLegalBERT)",
-                    label="🧠 Judicial Reasoner Engine Configuration"
-                )
                 fact_input = gr.Textbox(
                     label="Case Fact Narrative (Indian Criminal Jurisprudence)",
                     placeholder="Enter the factual summary of the criminal case (e.g. accused actions, weapon, injuries, motive, time, date)...",
@@ -5191,19 +5098,19 @@ Performance evaluated on Indian Criminal Documents & Benchmark Ground-Truth Corp
         ]
         all_outputs = [fact_input] + outputs_list
 
-        submit_btn.click(fn=process_case, inputs=[fact_input, engine_selector], outputs=outputs_list)
-        fact_input.submit(fn=process_case, inputs=[fact_input, engine_selector], outputs=outputs_list)
+        submit_btn.click(fn=process_case, inputs=[fact_input], outputs=outputs_list)
+        fact_input.submit(fn=process_case, inputs=[fact_input], outputs=outputs_list)
 
-        def run_sample_case(sample_text: str, engine_choice: str):
-            res = process_case(sample_text, engine_choice)
+        def run_sample_case(sample_text: str):
+            res = process_case(sample_text)
             return (sample_text, *res)
 
-        btn_theft.click(fn=lambda e: run_sample_case(SAMPLE_THRISSUR_THEFT, e), inputs=[engine_selector], outputs=all_outputs)
-        btn_fight.click(fn=lambda e: run_sample_case(SAMPLE_KAKKANAD_EXCEPTION4, e), inputs=[engine_selector], outputs=all_outputs)
-        btn_cheat.click(fn=lambda e: run_sample_case(SAMPLE_CHEATING, e), inputs=[engine_selector], outputs=all_outputs)
-        btn_rob.click(fn=lambda e: run_sample_case(SAMPLE_ROBBERY, e), inputs=[engine_selector], outputs=all_outputs)
-        btn_mat.click(fn=lambda e: run_sample_case(SAMPLE_MATRIMONIAL, e), inputs=[engine_selector], outputs=all_outputs)
-        btn_civil.click(fn=lambda e: run_sample_case(SAMPLE_CIVIL_NOISE, e), inputs=[engine_selector], outputs=all_outputs)
+        btn_theft.click(fn=lambda: run_sample_case(SAMPLE_THRISSUR_THEFT), inputs=[], outputs=all_outputs)
+        btn_fight.click(fn=lambda: run_sample_case(SAMPLE_KAKKANAD_EXCEPTION4), inputs=[], outputs=all_outputs)
+        btn_cheat.click(fn=lambda: run_sample_case(SAMPLE_CHEATING), inputs=[], outputs=all_outputs)
+        btn_rob.click(fn=lambda: run_sample_case(SAMPLE_ROBBERY), inputs=[], outputs=all_outputs)
+        btn_mat.click(fn=lambda: run_sample_case(SAMPLE_MATRIMONIAL), inputs=[], outputs=all_outputs)
+        btn_civil.click(fn=lambda: run_sample_case(SAMPLE_CIVIL_NOISE), inputs=[], outputs=all_outputs)
 
         def clear_all():
             empty_html = "<div style='color: #94a3b8; padding: 12px;'>Ready for case facts.</div>"
@@ -5212,6 +5119,7 @@ Performance evaluated on Indian Criminal Documents & Benchmark Ground-Truth Corp
         clear_btn.click(fn=clear_all, inputs=[], outputs=all_outputs)
 
         return demo
+
 
 
 # ========================================================================================

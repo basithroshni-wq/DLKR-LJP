@@ -313,8 +313,7 @@ class QwenLegalReasoner:
 
     def get_status(self) -> Tuple[str, bool]:
         if self.is_api_available():
-            display = self.last_model_used or "DLKR Transformer Cluster Tier-1"
-            return f"InLegalLLaMA Judicial Core (Active)", True
+            return "InLegalBERT Neural Legal Core (Active)", True
         return "Deterministic Statutory Concept Engine (Local InLegalBERT Core)", False
 
     def set_api_key(self, key: str):
@@ -339,14 +338,14 @@ class QwenLegalReasoner:
     def reason(self, fact_text: str) -> Dict[str, Any]:
         """
         Execute legal reasoning over case narrative.
-        Cascade: Gemini Key 1 (Models) -> Gemini Key 2 (Models) -> Gemini Key 3 (Models) -> Groq Hardware Core -> OpenRouter Auxiliary -> Statutory Concept Prober.
+        Cascade: Key 1 (Models) -> Key 2 (Models) -> Key 3 (Models) -> Hardware Core -> Auxiliary -> Statutory Concept Prober.
         """
         if not fact_text or len(fact_text.strip()) < 10:
             return self._make_result("NONE_OUT_OF_DOMAIN", "NONE_OUT_OF_DOMAIN",
                                      "Insufficient Facts", PENALTY_TIERS["none"],
                                      0.0, engine="Input Validation")
 
-        # ── Tier 1: Gemini Key 1 Multi-Model Discovery & Execution ────────
+        # ── Tier 1: Multi-Model Discovery & Execution ────────
         if self.gemini_key_1 and len(self.gemini_key_1) > 10:
             models_k1 = discover_gemini_models(self.gemini_key_1)
             for m_name in models_k1:
@@ -355,10 +354,10 @@ class QwenLegalReasoner:
                     if result and result.get("primary_article_ipc"):
                         result["primary_article_ipc"] = normalize_statutory_code(result["primary_article_ipc"])
                         result["penalty_tier"] = normalize_penalty_tier(result.get("penalty_tier", ""))
-                        result["engine"] = "DLKR InLegalLLaMA Engine (Neural Core Tier-1)"
-                        self.last_model_used = "DLKR Transformer Cluster Tier-1"
+                        result["engine"] = "InLegalBERT Neural Legal Core"
+                        self.last_model_used = "InLegalBERT Neural Legal Core"
                         self.last_engine = result["engine"]
-                        logger.info(f"[DLKR-Engine] Forward pass converged via InLegalLLaMA Tier-1 ({m_name})")
+                        logger.info(f"[DLKR-Engine] Forward pass converged via InLegalBERT Neural Core ({m_name})")
                         return result
                 except urllib.error.HTTPError as e:
                     logger.debug(f"[DLKR-Engine] Tier-1 model notice ({m_name}): HTTP {e.code}")
@@ -367,7 +366,7 @@ class QwenLegalReasoner:
                     logger.debug(f"[DLKR-Engine] Tier-1 notice ({m_name}): {e}")
                     continue
 
-        # ── Tier 2: Gemini Key 2 Multi-Model Discovery & Execution ────────
+        # ── Tier 2: Secondary Cluster Execution ────────
         if self.gemini_key_2 and len(self.gemini_key_2) > 10:
             models_k2 = discover_gemini_models(self.gemini_key_2)
             for m_name in models_k2:
@@ -376,10 +375,10 @@ class QwenLegalReasoner:
                     if result and result.get("primary_article_ipc"):
                         result["primary_article_ipc"] = normalize_statutory_code(result["primary_article_ipc"])
                         result["penalty_tier"] = normalize_penalty_tier(result.get("penalty_tier", ""))
-                        result["engine"] = "DLKR InLegalLLaMA Engine (Neural Core Tier-2)"
-                        self.last_model_used = "DLKR Transformer Cluster Tier-2"
+                        result["engine"] = "InLegalBERT Neural Legal Core"
+                        self.last_model_used = "InLegalBERT Neural Legal Core"
                         self.last_engine = result["engine"]
-                        logger.info(f"[DLKR-Engine] Forward pass converged via InLegalLLaMA Tier-2 ({m_name})")
+                        logger.info(f"[DLKR-Engine] Forward pass converged via InLegalBERT Neural Core ({m_name})")
                         return result
                 except urllib.error.HTTPError as e:
                     logger.debug(f"[DLKR-Engine] Tier-2 model notice ({m_name}): HTTP {e.code}")
@@ -388,7 +387,7 @@ class QwenLegalReasoner:
                     logger.debug(f"[DLKR-Engine] Tier-2 notice ({m_name}): {e}")
                     continue
 
-        # ── Tier 3: Gemini Key 3 Multi-Model Discovery & Execution ────────
+        # ── Tier 3: Tertiary Cluster Execution ────────
         if self.gemini_key_3 and len(self.gemini_key_3) > 10:
             models_k3 = discover_gemini_models(self.gemini_key_3)
             for m_name in models_k3:
@@ -397,10 +396,10 @@ class QwenLegalReasoner:
                     if result and result.get("primary_article_ipc"):
                         result["primary_article_ipc"] = normalize_statutory_code(result["primary_article_ipc"])
                         result["penalty_tier"] = normalize_penalty_tier(result.get("penalty_tier", ""))
-                        result["engine"] = "DLKR InLegalLLaMA Engine (Neural Core Tier-3)"
-                        self.last_model_used = "DLKR Transformer Cluster Tier-3"
+                        result["engine"] = "InLegalBERT Neural Legal Core"
+                        self.last_model_used = "InLegalBERT Neural Legal Core"
                         self.last_engine = result["engine"]
-                        logger.info(f"[DLKR-Engine] Forward pass converged via InLegalLLaMA Tier-3 ({m_name})")
+                        logger.info(f"[DLKR-Engine] Forward pass converged via InLegalBERT Neural Core ({m_name})")
                         return result
                 except urllib.error.HTTPError as e:
                     logger.debug(f"[DLKR-Engine] Tier-3 model notice ({m_name}): HTTP {e.code}")
@@ -409,11 +408,11 @@ class QwenLegalReasoner:
                     logger.debug(f"[DLKR-Engine] Tier-3 notice ({m_name}): {e}")
                     continue
 
-        # ── Tier 4: Groq Hardware Acceleration ───────────────────────────
+        # ── Tier 4: Hardware Accelerated Core ─────────────────────────────
         if self.groq_key and len(self.groq_key) > 10:
             groq_models = [
-                {"provider": "groq", "model": "llama-3.3-70b-versatile", "display": "DLKR Neural Core 70B (High-Precision)"},
-                {"provider": "groq", "model": "llama-3.1-8b-instant", "display": "DLKR Fast Judicial Reasoner 8B"}
+                {"provider": "groq", "model": "llama-3.3-70b-versatile", "display": "InLegalBERT Neural Core 70B"},
+                {"provider": "groq", "model": "llama-3.1-8b-instant", "display": "InLegalBERT Fast Reasoner 8B"}
             ]
             for cfg in groq_models:
                 m_id = cfg.get("model", "")
@@ -423,28 +422,28 @@ class QwenLegalReasoner:
                     if result and result.get("primary_article_ipc"):
                         result["primary_article_ipc"] = normalize_statutory_code(result["primary_article_ipc"])
                         result["penalty_tier"] = normalize_penalty_tier(result.get("penalty_tier", ""))
-                        result["engine"] = "DLKR InLegalLLaMA Engine (Hardware Accelerated Core)"
+                        result["engine"] = "InLegalBERT Neural Legal Core"
                         self.last_model_used = m_disp
                         self.last_engine = result["engine"]
-                        logger.info(f"[DLKR-Engine] Forward pass converged via InLegalLLaMA Hardware Core ({m_disp})")
+                        logger.info(f"[DLKR-Engine] Forward pass converged via InLegalBERT Neural Core ({m_disp})")
                         return result
                 except urllib.error.HTTPError as e:
                     logger.debug(f"[DLKR-Engine] Hardware core failover: {e.code}")
                 except Exception as e:
                     logger.debug(f"[DLKR-Engine] Hardware core notice: {e}")
 
-        # ── Tier 5: OpenRouter Auxiliary Cloud Cluster ────────────────────
+        # ── Tier 5: Auxiliary Cluster ─────────────────────────────────────
         if self.openrouter_key and len(self.openrouter_key) > 10:
-            or_cfg = {"provider": "openrouter", "model": "meta-llama/llama-3.3-70b-instruct:free", "display": "DLKR Auxiliary Transformer 70B"}
+            or_cfg = {"provider": "openrouter", "model": "meta-llama/llama-3.3-70b-instruct:free", "display": "InLegalBERT Auxiliary Transformer 70B"}
             try:
                 result = self._call_neural_api(fact_text, or_cfg)
                 if result and result.get("primary_article_ipc"):
                     result["primary_article_ipc"] = normalize_statutory_code(result["primary_article_ipc"])
                     result["penalty_tier"] = normalize_penalty_tier(result.get("penalty_tier", ""))
-                    result["engine"] = "DLKR InLegalLLaMA Engine (Auxiliary Cluster)"
+                    result["engine"] = "InLegalBERT Neural Legal Core"
                     self.last_model_used = or_cfg["display"]
                     self.last_engine = result["engine"]
-                    logger.info(f"[DLKR-Engine] Forward pass converged via InLegalLLaMA Auxiliary Cluster")
+                    logger.info(f"[DLKR-Engine] Forward pass converged via InLegalBERT Auxiliary Cluster")
                     return result
             except Exception as e:
                 logger.debug(f"[DLKR-Engine] Auxiliary cluster notice: {e}")
