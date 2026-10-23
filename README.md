@@ -106,7 +106,23 @@ Open the official notebook [`DLKR_LJP_Colab_Runner_V6.ipynb`](DLKR_LJP_Colab_Run
 !python dlkr_ljp_v5_final.py --share
 ```
 
-### Option B: Local Python Execution
+### Option B: Kaggle Notebook Execution
+Open or import [`DLKR_LJP_Kaggle_Runner.ipynb`](DLKR_LJP_Kaggle_Runner.ipynb) into Kaggle:
+```python
+# 1. Clone repository into Kaggle working directory
+!git clone https://github.com/basithroshni-wq/DLKR-LJP.git /kaggle/working/DLKR-LJP
+%cd /kaggle/working/DLKR-LJP
+
+# 2. Install lightweight dependencies
+!pip install -q transformers sentence-transformers gradio networkx
+
+# 3. Adjudicate any narrative or launch Gradio inline
+from dlkr_ljp_v5_final import predict_case, SAMPLE_KAKKANAD_EXCEPTION4
+result = predict_case(SAMPLE_KAKKANAD_EXCEPTION4)
+print(result['predictions']['head1_articles'][0]['display_name'])
+```
+
+### Option C: Local Python Execution
 ```bash
 git clone https://github.com/basithroshni-wq/DLKR-LJP.git
 cd DLKR-LJP

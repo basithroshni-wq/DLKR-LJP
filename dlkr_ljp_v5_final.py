@@ -3752,35 +3752,68 @@ class MultiTaskLegalPredictor:
         reasoner_art = ""
         reasoner_chg = ""
         if legal_reasoning:
-            ipc_target = str(legal_reasoning.get("primary_article_ipc", "")).upper()
-            bns_target = str(legal_reasoning.get("primary_article_bns", "")).upper()
-            ipc_target_nums = set(re.findall(r"\b\d{2,4}[A-Z]?\b", ipc_target))
-            bns_target_nums = set(re.findall(r"\b\d{2,4}[A-Z]?\b", bns_target))
+            ipc_target = str(legal_reasoning.get("primary_article_ipc", "")).upper().strip()
+            bns_target = str(legal_reasoning.get("primary_article_bns", "")).upper().strip()
 
-            # Match exact IPC section number first (prevents BNS 118(1)/118(2) collision between 324 and 326)
-            for art in config.LAW_ARTICLES:
-                reg_data = STATUTES_REGISTRY.get(art, {})
-                ipc_sec = str(reg_data.get("ipc_section", "")).upper()
-                ipc_sec_nums = set(re.findall(r"\b\d{2,4}[A-Z]?\b", ipc_sec))
-                if ipc_target_nums and ipc_sec_nums and (ipc_target_nums & ipc_sec_nums):
-                    reasoner_art = art
-                    break
-
-            if not reasoner_art:
-                # Match BNS section with subsection disambiguation
-                for art in config.LAW_ARTICLES:
-                    reg_data = STATUTES_REGISTRY.get(art, {})
-                    bns_sec = str(reg_data.get("bns_section", "")).upper()
-                    bns_sec_nums = set(re.findall(r"\b\d{2,4}[A-Z]?\b", bns_sec))
-                    if bns_target_nums and bns_sec_nums and (bns_target_nums & bns_sec_nums):
-                        if "118" in bns_sec_nums:
-                            if "118(2)" in bns_target or "(2)" in bns_target or atomic_facts.injury_severity == "Grievous (Fracture/Vital)":
-                                reasoner_art = "IPC_326_BNS_118_2"
-                            else:
-                                reasoner_art = "IPC_324_BNS_118_1"
+            # 1. Direct exact canonical match
+            if ipc_target in STATUTES_REGISTRY:
+                reasoner_art = ipc_target
+            elif any(ipc_target == art.upper() for art in config.LAW_ARTICLES):
+                reasoner_art = next(art for art in config.LAW_ARTICLES if art.upper() == ipc_target)
+            else:
+                # 2. Canonical Subpart Disambiguation
+                if "PART2" in ipc_target or "PART 2" in ipc_target or "PART II" in ipc_target or "EXCEPTION 4" in ipc_target:
+                    reasoner_art = "IPC_304_PART2_BNS_105"
+                elif "PART1" in ipc_target or "PART 1" in ipc_target or "PART I" in ipc_target:
+                    reasoner_art = "IPC_304_PART1_BNS_105"
+                elif "304A" in ipc_target or "106" in bns_target:
+                    reasoner_art = "IPC_304A_BNS_106"
+                elif "304B" in ipc_target or "80" in bns_target:
+                    reasoner_art = "IPC_304B_BNS_80"
+                elif "302" in ipc_target or "103" in bns_target:
+                    reasoner_art = "IPC_302_BNS_103"
+                elif "307" in ipc_target or "109" in bns_target:
+                    reasoner_art = "IPC_307_BNS_109"
+                elif "326" in ipc_target or "118_2" in ipc_target or "118(2)" in bns_target:
+                    reasoner_art = "IPC_326_BNS_118_2"
+                elif "324" in ipc_target or "118_1" in ipc_target or "118(1)" in bns_target:
+                    reasoner_art = "IPC_324_BNS_118_1"
+                elif "323" in ipc_target or "115" in bns_target:
+                    reasoner_art = "IPC_323_BNS_115"
+                elif "392" in ipc_target or "309" in bns_target:
+                    reasoner_art = "IPC_392_BNS_309"
+                elif "379" in ipc_target or "303" in bns_target:
+                    reasoner_art = "IPC_379_BNS_303"
+                elif "467" in ipc_target or "338" in bns_target:
+                    reasoner_art = "IPC_467_BNS_338"
+                elif "468" in ipc_target or "336" in bns_target:
+                    reasoner_art = "IPC_468_BNS_336"
+                elif "471" in ipc_target or "340" in bns_target:
+                    reasoner_art = "IPC_471_BNS_340"
+                elif "420" in ipc_target or "318" in bns_target:
+                    reasoner_art = "IPC_420_BNS_318"
+                elif "406" in ipc_target or "316" in bns_target:
+                    reasoner_art = "IPC_406_BNS_316"
+                elif "498A" in ipc_target or "85" in bns_target:
+                    reasoner_art = "IPC_498A_BNS_85"
+                elif "376" in ipc_target or "64" in bns_target:
+                    reasoner_art = "IPC_376_BNS_64"
+                elif "506" in ipc_target or "351" in bns_target:
+                    reasoner_art = "IPC_506_BNS_351"
+                elif "120B" in ipc_target or "61" in bns_target:
+                    reasoner_art = "IPC_120B_BNS_61"
+                elif "34" in ipc_target or "3" in bns_target:
+                    reasoner_art = "IPC_34_BNS_3"
+                else:
+                    ipc_target_nums = set(re.findall(r"\b\d{2,4}[A-Z]?\b", ipc_target))
+                    bns_target_nums = set(re.findall(r"\b\d{2,4}[A-Z]?\b", bns_target))
+                    for art in config.LAW_ARTICLES:
+                        reg_data = STATUTES_REGISTRY.get(art, {})
+                        ipc_sec = str(reg_data.get("ipc_section", "")).upper()
+                        ipc_sec_nums = set(re.findall(r"\b\d{2,4}[A-Z]?\b", ipc_sec))
+                        if ipc_target_nums and ipc_sec_nums and (ipc_target_nums & ipc_sec_nums):
+                            reasoner_art = art
                             break
-                        reasoner_art = art
-                        break
             reasoner_chg = legal_reasoning.get("primary_charge", "")
 
         # Statutory doctrine priorities
@@ -4555,7 +4588,10 @@ class DynamicLjpPipeline:
             import torch
             has_cuda = torch.cuda.is_available()
             if should_load is None:
-                should_load = has_cuda or getattr(config, "IS_COLAB", False)
+                # Default to False: prevents 15GB download hangs on Kaggle and Colab.
+                # High-speed neural reasoning is powered by the OpenRouter cloud cascade, with zero disk overhead.
+                # To explicitly load heavy local 4-bit weights on GPU, export DLKR_LOAD_LOCAL_GPU=1.
+                should_load = os.environ.get("DLKR_LOAD_LOCAL_GPU", "").lower() in ("1", "true", "yes")
         except ImportError:
             should_load = False
 
@@ -5426,20 +5462,34 @@ if __name__ == "__main__":
     demo = build_gradio_dashboard() if HAS_GRADIO else None
     if HAS_GRADIO and demo is not None:
         is_colab = "google.colab" in sys.modules or os.path.exists("/content")
+        is_kaggle = os.path.exists("/kaggle") or bool(os.environ.get("KAGGLE_KERNEL_RUN_TYPE"))
+        is_cloud = is_colab or is_kaggle
+        share_requested = is_cloud or ("--share" in sys.argv)
         print("\n=======================================================")
-        print("  ⚖️ DLKR-LJP V5: Interactive Legal Judgment Predictor")
+        print("  ⚖️ DLKR-LJP V6: Interactive Legal Judgment Predictor")
         print("  Launching Gradio Dashboard on http://127.0.0.1:7860")
         print("=======================================================\n")
         sys.stdout.flush()
         try:
             demo.queue().launch(
-                server_name="0.0.0.0" if is_colab else "127.0.0.1",
+                server_name="0.0.0.0" if is_cloud else "127.0.0.1",
                 server_port=7860,
-                share=is_colab or ("--share" in sys.argv),
+                share=share_requested,
+                inline=is_cloud,
                 show_error=True
             )
         except Exception as ge:
-            logger.warning(f"[Gradio Notice] Gradio launch issue ({ge}). Falling back to built-in HTTP server.")
-            run_http_api_server(port=7860)
+            logger.warning(f"[Gradio Notice] Share tunnel notice ({ge}). Falling back to inline/local launch...")
+            try:
+                demo.queue().launch(
+                    server_name="0.0.0.0" if is_cloud else "127.0.0.1",
+                    server_port=7860,
+                    share=False,
+                    inline=True,
+                    show_error=True
+                )
+            except Exception as e2:
+                logger.warning(f"[Gradio Notice] Falling back to built-in HTTP server: {e2}")
+                run_http_api_server(port=7860)
     else:
         run_http_api_server(port=7860)
