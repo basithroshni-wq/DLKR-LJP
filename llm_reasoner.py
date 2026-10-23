@@ -363,7 +363,13 @@ class QwenLegalReasoner:
             "contract", "driver", "accident", "court", "complaint", "cash", "wallet",
             "stolen", "ipc", "bns", "negligent", "negligence", "fake", "fabricated",
             "counterfeit", "certificate", "stabbed", "shot", "punched", "slapped",
-            "hit", "died", "death", "dead", "hurt", "injured", "weapon", "arrested"
+            "hit", "died", "death", "dead", "hurt", "injured", "weapon", "arrested",
+            "arson", "fire", "blaze", "burn", "burning", "burnt", "flames", "incinerate",
+            "strangle", "strangled", "choke", "choked", "suffocate", "drown", "drowned",
+            "poison", "poisoned", "toxic", "cyanide", "sedative", "overdose",
+            "extort", "extortion", "blackmail", "ransom", "kidnap", "kidnapped", "abduct",
+            "snatch", "snatched", "surgeon", "surgery", "intoxicated", "alcohol", "drunk",
+            "debtor", "loan", "revolver", "stamp", "papers", "decapitation", "expiration"
         }
         if not (words & legal_terms):
             return self._make_result(
@@ -377,7 +383,7 @@ class QwenLegalReasoner:
         civil_cues = ["arbitration", "unpaid invoice", "delayed delivery",
                       "commercial contract", "service agreement", "civil dispute",
                       "breach of contract", "penalty clause"]
-        violence_words = {"killed", "died", "stabbed", "rape", "shot", "murdered"}
+        violence_words = {"killed", "died", "stabbed", "rape", "shot", "murdered", "fire", "burn"}
         if any(c in tl for c in civil_cues) and not (words & violence_words):
             return self._make_result(
                 "NONE_CIVIL_DISPUTE", "NONE_CIVIL_DISPUTE",
@@ -387,11 +393,12 @@ class QwenLegalReasoner:
                 extra={"is_purely_civil": True}
             )
 
-        # Robbery
+        # Robbery & Extortion with Force / Threat
         robbery_cues = ["held a knife", "held a dagger", "held a gun", "at knifepoint",
-                        "at gunpoint", "brandished", "under threat of death", "forcibly snatched"]
-        property_words = {"phone", "cash", "wallet", "gold", "chain", "drawer", "bag", "collection", "property"}
-        if any(c in tl for c in robbery_cues) and (words & property_words):
+                        "at gunpoint", "brandished", "under threat of death", "forcibly snatched",
+                        "ransom", "extortion", "extort", "revolver", "stamp papers", "forced to sign"]
+        property_words = {"phone", "cash", "wallet", "gold", "chain", "drawer", "bag", "collection", "property", "rupees", "crore", "papers", "ransom"}
+        if any(c in tl for c in robbery_cues) or (any(w in words for w in {"ransom", "extortion"}) and (words & property_words)):
             return self._make_result(
                 "IPC_392_BNS_309", "BNS 309(4)",
                 "Robbery / Extortion with Force", PENALTY_TIERS["tier3"], 0.93,
@@ -399,15 +406,15 @@ class QwenLegalReasoner:
             )
 
         # ── Criminal Intimidation (Check threats before homicide) ────────
-        intimidation_cues = ["threatened to kill", "death threat", "blow up his shop", "protection money", "threatened to blow", "extortion threat"]
-        actual_death = {"died", "dead", "succumbed", "fatality", "fatal", "murdered"}
+        intimidation_cues = ["threatened to kill", "death threat", "blow up his shop", "protection money", "threatened to blow", "extortion threat", "threatened to shoot"]
+        actual_death = {"died", "dead", "succumbed", "fatality", "fatal", "murdered", "expiration", "perished"}
         if any(c in tl for c in intimidation_cues) and not (words & actual_death):
             return self._make_result("IPC_506_BNS_351", "BNS 351(3)",
                 "Criminal Intimidation", PENALTY_TIERS["tier2"], 0.91,
                 engine="Statutory Concept Engine")
 
         # ── Attempt to Murder (Survival check before homicide) ───────────
-        has_survived = any(c in tl for c in ["survived", "icu", "emergency surgical", "rushed to the icu"])
+        has_survived = any(c in tl for c in ["survived", "icu", "emergency surgical", "rushed to the icu", "stable condition", "under treatment"])
         if has_survived and not (words & actual_death):
             return self._make_result("IPC_307_BNS_109", "BNS 109",
                 "Attempt to Murder", PENALTY_TIERS["tier3"], 0.92,
@@ -416,20 +423,23 @@ class QwenLegalReasoner:
         # Fatality Spectrum
         death_words = {
             "died", "dead", "death", "killed", "killing", "kill", "die", "dying",
-            "succumbed", "fatality", "fatal", "murdered", "cyanide", "lethal"
+            "succumbed", "fatality", "fatal", "murdered", "cyanide", "lethal",
+            "expiration", "perished", "burn to death", "burnt alive", "strangled", "drowned"
         }
-        is_death = bool(words & death_words) or ("shot dead" in tl) or ("fatal" in tl)
-        if "threat of death" in tl and not (words & {"died", "dead", "killed", "killing", "die", "succumbed", "fatal"}):
+        is_death = bool(words & death_words) or ("shot dead" in tl) or ("fatal" in tl) or ("on fire" in tl and "house" in tl)
+        if "threat of death" in tl and not (words & {"died", "dead", "killed", "killing", "die", "succumbed", "fatal", "expiration"}):
             is_death = False
 
         if is_death:
             rash_cues = ["rash", "negligent driving", "truck driver", "accident",
-                         "school zone", "speeding", "highway", "collision"]
+                         "school zone", "speeding", "highway", "collision", "surgeon",
+                         "intoxicated", "alcohol", "drunk", "surgical", "operation", "medical"]
             sudden_cues = ["sudden", "heat of passion", "quarrel", "altercation",
                            "without premeditation", "impromptu", "scuffle", "spur of the moment",
                            "without any prior planning", "trivial"]
             premed_cues = ["premeditated", "ambush", "lay in wait", "prior enmity",
-                           "rivalry", "cyanide", "poison", "laced", "planned", "point-blank"]
+                           "rivalry", "cyanide", "poison", "laced", "planned", "point-blank",
+                           "fire", "arson", "midnight", "locked", "strangled"]
             dowry_cues = ["dowry", "bride", "in-laws"]
 
             is_rash = any(c in tl for c in rash_cues)
@@ -515,13 +525,13 @@ class QwenLegalReasoner:
                 PENALTY_TIERS["tier2"], 0.91, engine="Statutory Concept Engine")
 
         # Criminal Intimidation
-        if any(w in words for w in {"threatened", "intimidation", "blow", "protection"}):
+        if any(w in words for w in {"threatened", "intimidation", "blow", "protection", "warning"}):
             return self._make_result("IPC_506_BNS_351", "BNS 351(3)",
                 "Criminal Intimidation", PENALTY_TIERS["tier2"], 0.89,
                 engine="Statutory Concept Engine")
 
-        # Theft
-        if any(w in words for w in {"stole", "pickpocket", "stolen", "theft", "bicycle", "unnoticed", "parked"}):
+        # Theft / Snatching
+        if any(w in words for w in {"stole", "pickpocket", "stolen", "theft", "bicycle", "unnoticed", "parked", "snatched", "sprinted"}):
             return self._make_result("IPC_379_BNS_303", "BNS 303(2)",
                 "Theft of Movable Property", PENALTY_TIERS["tier1"], 0.91,
                 engine="Statutory Concept Engine")
@@ -532,10 +542,23 @@ class QwenLegalReasoner:
                 "Matrimonial Cruelty", PENALTY_TIERS["tier1"], 0.90,
                 engine="Statutory Concept Engine")
 
-        # Fallback
-        return self._make_result("IPC_379_BNS_303", "BNS 303(2)",
-            "Theft of Movable Property", PENALTY_TIERS["tier1"], 0.60,
-            engine="Statutory Concept Engine (Fallback)")
+        # Actus-Reus Based Smart Fallback (Avoid Blind Theft Routing)
+        if any(w in words for w in {"hurt", "beat", "hit", "assault", "struck", "attacked", "injury"}):
+            return self._make_result("IPC_324_BNS_118_1", "BNS 118(1)",
+                "Voluntarily Causing Hurt by Dangerous Weapons or Means",
+                PENALTY_TIERS["tier1"], 0.65, engine="Statutory Concept Engine (Actus Reus Fallback)")
+        if any(w in words for w in {"threat", "threaten", "warned", "demanded"}):
+            return self._make_result("IPC_506_BNS_351", "BNS 351(3)",
+                "Criminal Intimidation", PENALTY_TIERS["tier2"], 0.65,
+                engine="Statutory Concept Engine (Actus Reus Fallback)")
+        if any(w in words for w in {"money", "cheated", "property", "induced"}):
+            return self._make_result("IPC_420_BNS_318", "BNS 318(4)",
+                "Cheating & Dishonestly Inducing Delivery of Property",
+                PENALTY_TIERS["tier2"], 0.65, engine="Statutory Concept Engine (Actus Reus Fallback)")
+
+        return self._make_result("NONE_OUT_OF_DOMAIN", "NONE_OUT_OF_DOMAIN",
+            "Non-Legal / Insufficient Criminal Facts", PENALTY_TIERS["none"], 0.20,
+            engine="Statutory Concept Engine (Abstention)", extra={"is_out_of_domain": True})
 
     # ─────────────────────────────────────────────────────────────────────
     # Result Builder
