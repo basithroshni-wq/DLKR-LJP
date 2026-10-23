@@ -5008,7 +5008,15 @@ def build_gradio_dashboard():
     reasoner_bg = "rgba(14, 165, 233, 0.15)" if is_api_active else "rgba(245, 158, 11, 0.15)"
     reasoner_border = "rgba(14, 165, 233, 0.4)" if is_api_active else "rgba(245, 158, 11, 0.4)"
 
-    with gr.Blocks(title="DLKR-LJP: Legal Judgment Prediction", theme=theme) as demo:
+    blocks_kwargs = {"title": "DLKR-LJP: Legal Judgment Prediction"}
+    try:
+        gr_major = int(str(gr.__version__).split(".")[0])
+        if gr_major < 6:
+            blocks_kwargs["theme"] = theme
+    except Exception:
+        pass
+
+    with gr.Blocks(**blocks_kwargs) as demo:
         gr.HTML(f"""
             <div style='text-align: center; padding: 14px 0 8px 0;'>
             <h1 style='margin-bottom: 6px; font-size: 28px; color: #f8fafc; font-weight: 800; letter-spacing: -0.5px;'>⚖️ Dynamic Legal Knowledge Retrieval for Judgment Prediction (DLKR-LJP)</h1>
@@ -5448,11 +5456,14 @@ if __name__ == "__main__":
         print("  ⚖️ DLKR-LJP V6: Interactive Legal Judgment Predictor")
         print("  Launching Gradio Dashboard on http://127.0.0.1:7860")
         print("=======================================================\n")
-        sys.stdout.flush()
+        try:
+            gr.close_all()
+        except Exception:
+            pass
+
         try:
             demo.queue().launch(
                 server_name="0.0.0.0" if is_cloud else "127.0.0.1",
-                server_port=7860,
                 share=share_requested,
                 inline=is_cloud,
                 show_error=True
@@ -5462,7 +5473,6 @@ if __name__ == "__main__":
             try:
                 demo.queue().launch(
                     server_name="0.0.0.0" if is_cloud else "127.0.0.1",
-                    server_port=7860,
                     share=False,
                     inline=True,
                     show_error=True
