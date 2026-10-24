@@ -239,7 +239,16 @@ def normalize_statutory_code(code: str) -> str:
         return "IPC_379_BNS_303"
     c_upper = str(code).upper().strip()
 
-    # Exact match
+    try:
+        from config import STATUTES_REGISTRY
+    except Exception:
+        STATUTES_REGISTRY = {}
+
+    # Exact match in registry
+    if STATUTES_REGISTRY and c_upper in STATUTES_REGISTRY:
+        return c_upper
+
+    # Exact match prefix
     if c_upper.startswith("IPC_") or c_upper.startswith("NONE_"):
         return c_upper
 
@@ -251,10 +260,20 @@ def normalize_statutory_code(code: str) -> str:
     if any(k in c_upper for k in ["OUT_OF_DOMAIN", "NON_LEGAL", "NON-LEGAL", "RECIPE", "INSUFFICIENT"]):
         return "NONE_OUT_OF_DOMAIN"
 
-    # Check key matches
+    # Check key matches in map
     for key, canonical in CANONICAL_IPC_MAP.items():
         if key in c_upper:
             return canonical
+
+    # Number-based regex match against STATUTES_REGISTRY
+    c_nums = set(re.findall(r"\b\d{2,4}[A-Z]?\b", c_upper))
+    if c_nums and STATUTES_REGISTRY:
+        for reg_key, reg_data in STATUTES_REGISTRY.items():
+            ipc_sec = str(reg_data.get("ipc_section", "")).upper()
+            bns_sec = str(reg_data.get("bns_section", "")).upper()
+            reg_nums = set(re.findall(r"\b\d{2,4}[A-Z]?\b", f"{ipc_sec} {bns_sec} {reg_key}"))
+            if c_nums & reg_nums:
+                return reg_key
 
     return "IPC_379_BNS_303"
 

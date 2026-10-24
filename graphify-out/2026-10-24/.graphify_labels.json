@@ -10,7 +10,7 @@
   "8": "dlkr_ljp_v5_final.py",
   "9": "AtomicLegalFactExtractor",
   "10": "IldcCorpusStreamer",
-  "11": "DynamicLegalKnowledgeRetriever",
+  "11": "statutory_verifier.py",
   "12": "NeuralAttentionResolver",
   "13": "repackage_all.py",
   "14": "data_pipeline/__init__.py",

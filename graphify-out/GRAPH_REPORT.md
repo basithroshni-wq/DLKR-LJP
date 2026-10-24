@@ -1,16 +1,16 @@
 # Graph Report - DLKR-LJP-main  (2026-10-24)
 
 ## Corpus Check
-- 28 files · ~61,753 words
+- 29 files · ~62,418 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 283 nodes · 440 edges · 19 communities (13 shown, 1 thin omitted)
+- 286 nodes · 449 edges · 19 communities (13 shown, 1 thin omitted)
 - Extraction: 98% EXTRACTED · 2% INFERRED · 0% AMBIGUOUS · INFERRED: 7 edges (avg confidence: 0.94)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `d10732eb`
+- Built from commit: `6250a0bf`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -39,8 +39,8 @@
 6. `DynamicLegalKnowledgeRetriever` - 9 edges
 7. `StatutoryTwoStageVerifier` - 9 edges
 8. `IldcCorpusStreamer` - 8 edges
-9. `StatutoryKnowledgeGraph` - 8 edges
-10. `InLegalBertMeanEncoder` - 8 edges
+9. `predict_case()` - 8 edges
+10. `StatutoryKnowledgeGraph` - 8 edges
 
 ## Surprising Connections (you probably didn't know these)
 - `DynamicLjpPipeline` --uses--> `StatutoryKnowledgeGraph`  [INFERRED]
@@ -60,8 +60,8 @@
 ## Communities (19 total, 1 thin omitted)
 
 ### Community 0 - "QwenLegalReasoner"
-Cohesion: 0.15
-Nodes (12): discover_gemini_models(), Any, QwenLegalReasoner, Production-grade Legal Reasoner with 6-Tier Stealth Cascade: Tier 1:…, Execute legal reasoning over case narrative. Cascade: Key 1 (Models) -> Key 2…, Dynamically discover all active generative models for a given Google AI Studio…, get_active_model_info(), get_reasoner() (+4 more)
+Cohesion: 0.11
+Nodes (17): discover_gemini_models(), normalize_penalty_tier(), normalize_statutory_code(), Any, QwenLegalReasoner, ===============================================================================…, Normalizes natural language IPC/BNS strings to canonical DLKR codes., Normalizes natural language penalty descriptions to canonical tiers. (+9 more)
 
 ### Community 1 - "Any"
 Cohesion: 0.12
@@ -92,8 +92,8 @@ Cohesion: 0.12
 Nodes (16): 1. GraphRAG Statutory Knowledge Graph (DAG Engine), 1. Run Full 27-Case Statutory Benchmark Suite, 2. Launch Interactive Gradio Web Dashboard, 2. Universal Qwen-2.5-7B Neural Reasoner & Multi-Backend Architecture, 3. Dual-Code Statutory Harmonization (IPC 1860 & BNS 2023), 3. Google Colab GPU Execution, 4. Interactive Academic Presentation Deck, 4. Judicial Consistency Verifier (JCV) & Precedent Grounding (+8 more)
 
 ### Community 8 - "dlkr_ljp_v5_final.py"
-Cohesion: 0.15
-Nodes (16): build_gradio_dashboard(), DynamicLjpPipeline, get_active_llm_status(), get_pipeline(), _patch_gradio_compatibility(), predict_case(), process_case(), ===============================================================================… (+8 more)
+Cohesion: 0.13
+Nodes (18): build_gradio_dashboard(), DynamicLjpPipeline, get_active_llm_status(), get_pipeline(), _patch_gradio_compatibility(), predict_case(), process_case(), ===============================================================================… (+10 more)
 
 ### Community 9 - "AtomicLegalFactExtractor"
 Cohesion: 0.18
@@ -104,8 +104,8 @@ Cohesion: 0.21
 Nodes (8): IldcCorpusStreamer, Any, Path, ===============================================================================…, Streams full judgments from the Exploration-Lab/ILDC dataset on Hugging Face.…, Manages local and remote real-world Indian court judgment corpora., Loads the cached dataset slice, or generates a comprehensive 2,500-case factual…, Generates realistic, varied Indian court judgment factual narratives covering…
 
 ### Community 11 - "statutory_verifier.py"
-Cohesion: 0.08
-Nodes (25): generate_synthetic_dataset(), ===============================================================================…, Generates synthetic FIR narratives across the 40 statutes., run_evaluation(), normalize_penalty_tier(), normalize_statutory_code(), ===============================================================================…, Normalizes natural language IPC/BNS strings to canonical DLKR codes. (+17 more)
+Cohesion: 0.11
+Nodes (20): generate_synthetic_dataset(), ===============================================================================…, Generates synthetic FIR narratives across the 40 statutes., run_evaluation(), compute_dense_score(), get_statutory_verifier(), parse_date_from_text(), preprocess_narrative() (+12 more)
 
 ### Community 13 - "repackage_all.py"
 Cohesion: 0.53
@@ -113,23 +113,23 @@ Nodes (5): main(), make_zip(), Path, ===========================================
 
 ## Knowledge Gaps
 - **26 isolated node(s):** `Dual-Code Indian Criminal Jurisprudence (IPC 1860 & BNS 2023) with Multi-Model Neural Cascade & GraphRAG`, `🔬 Abstract & Architecture Overview`, `1. Neural Legal Reasoner (Multi-Model Cascade)`, `2. GraphRAG Statutory Knowledge Graph (DAG Engine)`, `3. Dual-Code Statutory Harmonization (IPC 1860 & BNS 2023)` (+21 more)
-  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 126 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 127 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
 - **1 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `StatutoryKnowledgeGraph` connect `config.py` to `dlkr_ljp_v5_final.py`, `Any`?**
-  _High betweenness centrality (0.221) - this node is a cross-community bridge._
-- **Why does `QwenLegalReasoner` connect `QwenLegalReasoner` to `statutory_verifier.py`?**
-  _High betweenness centrality (0.128) - this node is a cross-community bridge._
-- **Why does `MultiTaskLegalPredictor` connect `MultiTaskLegalPredictor` to `dlkr_ljp_v5_final.py`, `Any`, `AtomicLegalFactExtractor`?**
-  _High betweenness centrality (0.060) - this node is a cross-community bridge._
+  _High betweenness centrality (0.137) - this node is a cross-community bridge._
+- **Why does `normalize_statutory_code()` connect `QwenLegalReasoner` to `dlkr_ljp_v5_final.py`, `statutory_verifier.py`, `MultiTaskLegalPredictor`?**
+  _High betweenness centrality (0.095) - this node is a cross-community bridge._
+- **Why does `normalize_penalty_tier()` connect `QwenLegalReasoner` to `dlkr_ljp_v5_final.py`, `statutory_verifier.py`, `MultiTaskLegalPredictor`?**
+  _High betweenness centrality (0.095) - this node is a cross-community bridge._
 - **What connects `Dual-Code Indian Criminal Jurisprudence (IPC 1860 & BNS 2023) with Multi-Model Neural Cascade & GraphRAG`, `🔬 Abstract & Architecture Overview`, `1. Neural Legal Reasoner (Multi-Model Cascade)` to the rest of the system?**
   _26 weakly-connected nodes found - possible documentation gaps or missing edges._
+- **Should `QwenLegalReasoner` be split into smaller, more focused modules?**
+  _Cohesion score 0.11264367816091954 - nodes in this community are weakly interconnected._
 - **Should `Any` be split into smaller, more focused modules?**
   _Cohesion score 0.12298387096774194 - nodes in this community are weakly interconnected._
 - **Should `train_heads.py` be split into smaller, more focused modules?**
   _Cohesion score 0.09523809523809523 - nodes in this community are weakly interconnected._
-- **Should `config.py` be split into smaller, more focused modules?**
-  _Cohesion score 0.09655172413793103 - nodes in this community are weakly interconnected._

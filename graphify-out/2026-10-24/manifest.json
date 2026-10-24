@@ -1,8 +1,8 @@
 {
   "config.py": {
-    "mtime": 1792777639.6977508,
-    "seen": 1792778167.2501621,
-    "ast_hash": "69b41991199e03856e0bd972cb14ff64",
+    "mtime": 1792783003.9915128,
+    "seen": 1792784232.59147,
+    "ast_hash": "3c4f45aaaf0ac77daae67ee54eb52026",
     "semantic_hash": ""
   },
   "data_pipeline/__init__.py": {
@@ -54,9 +54,9 @@
     "semantic_hash": ""
   },
   "llm_reasoner.py": {
-    "mtime": 1792780737.2126746,
-    "seen": 1792780921.5982072,
-    "ast_hash": "b9de66b0e77961385603a1ff8fa94a5d",
+    "mtime": 1792783603.8434086,
+    "seen": 1792784232.59147,
+    "ast_hash": "65d55f32e4a152196c4c321363e09f59",
     "semantic_hash": ""
   },
   "models/__init__.py": {
@@ -90,9 +90,9 @@
     "semantic_hash": ""
   },
   "repackage_all.py": {
-    "mtime": 1792773021.5022998,
-    "seen": 1792777302.5012996,
-    "ast_hash": "7ae26911920381918006fd96adbdbc18",
+    "mtime": 1792784186.2436717,
+    "seen": 1792784232.59147,
+    "ast_hash": "752e03bd24520f1cc4a5f2df731a16d0",
     "semantic_hash": ""
   },
   "test_25_plus_cases.py": {
@@ -138,15 +138,45 @@
     "semantic_hash": ""
   },
   "presentation_slides.html": {
-    "mtime": 1792773021.4935155,
-    "seen": 1792777302.5012996,
-    "ast_hash": "1b8f483f3232c9ab1ea5a79bee5f265d",
+    "mtime": 1792784220.7048888,
+    "seen": 1792784232.59147,
+    "ast_hash": "5b97f90cdaf956a90399d427997e1e8b",
     "semantic_hash": ""
   },
   "requirements.txt": {
     "mtime": 1792779559.1682045,
     "seen": 1792779573.7221959,
     "ast_hash": "1e273d2e2cd6cff283a6034aad09b476",
+    "semantic_hash": ""
+  },
+  "data_pipeline/build_statutes_40.py": {
+    "mtime": 1792782932.1425378,
+    "seen": 1792784232.59147,
+    "ast_hash": "da816dff817c60fc734893b2b59b810b",
+    "semantic_hash": ""
+  },
+  "data_pipeline/statutes_40_registry.json": {
+    "mtime": 1792782938.513053,
+    "seen": 1792784232.59147,
+    "ast_hash": "d8cf6fc0d03fd8a302d53614df2d27d2",
+    "semantic_hash": ""
+  },
+  "evaluate_40_accuracy.py": {
+    "mtime": 1792783412.1338627,
+    "seen": 1792784232.59147,
+    "ast_hash": "583930e9b043a24ee98ca14cdd3c0982",
+    "semantic_hash": ""
+  },
+  "evaluation_40_results.json": {
+    "mtime": 1792784082.267163,
+    "seen": 1792784232.59147,
+    "ast_hash": "0b42d765d50feff27dcab85029178459",
+    "semantic_hash": ""
+  },
+  "verification/statutory_verifier.py": {
+    "mtime": 1792784028.8445878,
+    "seen": 1792784232.59147,
+    "ast_hash": "3912047f8d0f31a5af38b11a5e2db910",
     "semantic_hash": ""
   }
 }

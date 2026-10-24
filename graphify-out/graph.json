@@ -14,7 +14,7 @@
       "file_type": "code",
       "norm_label": "qwenlegalreasoner",
       "source_file": "llm_reasoner.py",
-      "source_location": "L278"
+      "source_location": "L297"
     },
     {
       "id": "dlkr_ljp_v5_final_atomiccasefacts",
@@ -53,7 +53,7 @@
       "file_type": "code",
       "norm_label": "judicialconsistencyverifier",
       "source_file": "dlkr_ljp_v5_final.py",
-      "source_location": "L4141"
+      "source_location": "L4172"
     },
     {
       "id": "dlkr_ljp_v5_final_prefixknowledgefusion",
@@ -300,7 +300,7 @@
       "file_type": "code",
       "norm_label": "dynamicljppipeline",
       "source_file": "dlkr_ljp_v5_final.py",
-      "source_location": "L4492"
+      "source_location": "L4523"
     },
     {
       "id": "dlkr_ljp_v5_final_atomiclegalfactextractor",
@@ -341,6 +341,42 @@
       "source_location": "L66"
     },
     {
+      "id": "llm_reasoner_load_env_file",
+      "label": "_load_env_file()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "QwenLegalReasoner",
+      "file_type": "code",
+      "norm_label": "_load_env_file()",
+      "source_file": "llm_reasoner.py",
+      "source_location": "L29"
+    },
+    {
+      "id": "llm_reasoner_normalize_penalty_tier",
+      "label": "normalize_penalty_tier()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "QwenLegalReasoner",
+      "file_type": "code",
+      "norm_label": "normalize_penalty_tier()",
+      "source_file": "llm_reasoner.py",
+      "source_location": "L281"
+    },
+    {
+      "id": "llm_reasoner_normalize_statutory_code",
+      "label": "normalize_statutory_code()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "QwenLegalReasoner",
+      "file_type": "code",
+      "norm_label": "normalize_statutory_code()",
+      "source_file": "llm_reasoner.py",
+      "source_location": "L236"
+    },
+    {
       "id": "llm_reasoner_qwenlegalreasoner_call_gemini_api",
       "label": "._call_gemini_api()",
       "_callable": true,
@@ -350,7 +386,7 @@
       "file_type": "code",
       "norm_label": "._call_gemini_api()",
       "source_file": "llm_reasoner.py",
-      "source_location": "L457"
+      "source_location": "L476"
     },
     {
       "id": "llm_reasoner_qwenlegalreasoner_call_neural_api",
@@ -362,7 +398,7 @@
       "file_type": "code",
       "norm_label": "._call_neural_api()",
       "source_file": "llm_reasoner.py",
-      "source_location": "L493"
+      "source_location": "L512"
     },
     {
       "id": "llm_reasoner_qwenlegalreasoner_extract_json",
@@ -374,7 +410,7 @@
       "file_type": "code",
       "norm_label": "._extract_json()",
       "source_file": "llm_reasoner.py",
-      "source_location": "L543"
+      "source_location": "L562"
     },
     {
       "id": "llm_reasoner_qwenlegalreasoner_get_status",
@@ -386,7 +422,7 @@
       "file_type": "code",
       "norm_label": ".get_status()",
       "source_file": "llm_reasoner.py",
-      "source_location": "L314"
+      "source_location": "L333"
     },
     {
       "id": "llm_reasoner_qwenlegalreasoner_init",
@@ -398,7 +434,7 @@
       "file_type": "code",
       "norm_label": ".__init__()",
       "source_file": "llm_reasoner.py",
-      "source_location": "L289"
+      "source_location": "L308"
     },
     {
       "id": "llm_reasoner_qwenlegalreasoner_is_api_available",
@@ -410,7 +446,7 @@
       "file_type": "code",
       "norm_label": ".is_api_available()",
       "source_file": "llm_reasoner.py",
-      "source_location": "L306"
+      "source_location": "L325"
     },
     {
       "id": "llm_reasoner_qwenlegalreasoner_make_result",
@@ -422,7 +458,7 @@
       "file_type": "code",
       "norm_label": "._make_result()",
       "source_file": "llm_reasoner.py",
-      "source_location": "L814"
+      "source_location": "L833"
     },
     {
       "id": "llm_reasoner_qwenlegalreasoner_reason",
@@ -434,7 +470,7 @@
       "file_type": "code",
       "norm_label": ".reason()",
       "source_file": "llm_reasoner.py",
-      "source_location": "L338"
+      "source_location": "L357"
     },
     {
       "id": "llm_reasoner_qwenlegalreasoner_set_api_key",
@@ -446,7 +482,7 @@
       "file_type": "code",
       "norm_label": ".set_api_key()",
       "source_file": "llm_reasoner.py",
-      "source_location": "L319"
+      "source_location": "L338"
     },
     {
       "id": "llm_reasoner_qwenlegalreasoner_statutory_concept_engine",
@@ -458,7 +494,7 @@
       "file_type": "code",
       "norm_label": "._statutory_concept_engine()",
       "source_file": "llm_reasoner.py",
-      "source_location": "L600"
+      "source_location": "L619"
     },
     {
       "id": "neural_attention_kernel_get_active_model_info",
@@ -590,7 +626,7 @@
       "file_type": "code",
       "norm_label": ".__init__()",
       "source_file": "dlkr_ljp_v5_final.py",
-      "source_location": "L4493"
+      "source_location": "L4524"
     },
     {
       "id": "dlkr_ljp_v5_final_judicialconsistencyverifier_init",
@@ -602,7 +638,7 @@
       "file_type": "code",
       "norm_label": ".__init__()",
       "source_file": "dlkr_ljp_v5_final.py",
-      "source_location": "L4142"
+      "source_location": "L4173"
     },
     {
       "id": "dlkr_ljp_v5_final_judicialconsistencyverifier_verify_and_reconcile",
@@ -614,7 +650,7 @@
       "file_type": "code",
       "norm_label": ".verify_and_reconcile()",
       "source_file": "dlkr_ljp_v5_final.py",
-      "source_location": "L4145"
+      "source_location": "L4176"
     },
     {
       "id": "dlkr_ljp_v5_final_prefixknowledgefusion_construct_fused_prompt",
@@ -831,42 +867,6 @@
       "norm_label": "run_evaluation()",
       "source_file": "evaluate_40_accuracy.py",
       "source_location": "L128"
-    },
-    {
-      "id": "llm_reasoner_load_env_file",
-      "label": "_load_env_file()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 11,
-      "community_name": "statutory_verifier.py",
-      "file_type": "code",
-      "norm_label": "_load_env_file()",
-      "source_file": "llm_reasoner.py",
-      "source_location": "L29"
-    },
-    {
-      "id": "llm_reasoner_normalize_penalty_tier",
-      "label": "normalize_penalty_tier()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 11,
-      "community_name": "statutory_verifier.py",
-      "file_type": "code",
-      "norm_label": "normalize_penalty_tier()",
-      "source_file": "llm_reasoner.py",
-      "source_location": "L262"
-    },
-    {
-      "id": "llm_reasoner_normalize_statutory_code",
-      "label": "normalize_statutory_code()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 11,
-      "community_name": "statutory_verifier.py",
-      "file_type": "code",
-      "norm_label": "normalize_statutory_code()",
-      "source_file": "llm_reasoner.py",
-      "source_location": "L236"
     },
     {
       "id": "verification_statutory_verifier_compute_dense_score",
@@ -1478,7 +1478,7 @@
       "file_type": "code",
       "norm_label": "build_gradio_dashboard()",
       "source_file": "dlkr_ljp_v5_final.py",
-      "source_location": "L4973"
+      "source_location": "L5012"
     },
     {
       "id": "dlkr_ljp_v5_final_dynamicljppipeline_generate_traceable_evidence",
@@ -1490,7 +1490,7 @@
       "file_type": "code",
       "norm_label": "._generate_traceable_evidence()",
       "source_file": "dlkr_ljp_v5_final.py",
-      "source_location": "L4628"
+      "source_location": "L4667"
     },
     {
       "id": "dlkr_ljp_v5_final_dynamicljppipeline_run",
@@ -1502,7 +1502,7 @@
       "file_type": "code",
       "norm_label": ".run()",
       "source_file": "dlkr_ljp_v5_final.py",
-      "source_location": "L4531"
+      "source_location": "L4562"
     },
     {
       "id": "dlkr_ljp_v5_final_get_active_llm_status",
@@ -1526,7 +1526,7 @@
       "file_type": "code",
       "norm_label": "get_pipeline()",
       "source_file": "dlkr_ljp_v5_final.py",
-      "source_location": "L4711"
+      "source_location": "L4750"
     },
     {
       "id": "dlkr_ljp_v5_final_patch_gradio_compatibility",
@@ -1538,7 +1538,7 @@
       "file_type": "code",
       "norm_label": "_patch_gradio_compatibility()",
       "source_file": "dlkr_ljp_v5_final.py",
-      "source_location": "L4925"
+      "source_location": "L4964"
     },
     {
       "id": "dlkr_ljp_v5_final_predict_case",
@@ -1550,7 +1550,7 @@
       "file_type": "code",
       "norm_label": "predict_case()",
       "source_file": "dlkr_ljp_v5_final.py",
-      "source_location": "L5128"
+      "source_location": "L5167"
     },
     {
       "id": "dlkr_ljp_v5_final_process_case",
@@ -1562,7 +1562,7 @@
       "file_type": "code",
       "norm_label": "process_case()",
       "source_file": "dlkr_ljp_v5_final.py",
-      "source_location": "L4734"
+      "source_location": "L4773"
     },
     {
       "id": "dlkr_ljp_v5_final_run_http_api_server",
@@ -1574,7 +1574,7 @@
       "file_type": "code",
       "norm_label": "run_http_api_server()",
       "source_file": "dlkr_ljp_v5_final.py",
-      "source_location": "L5139"
+      "source_location": "L5178"
     },
     {
       "id": "test_25_plus_cases_run_all_cases",
@@ -1587,6 +1587,18 @@
       "norm_label": "run_all_cases()",
       "source_file": "test_25_plus_cases.py",
       "source_location": "L90"
+    },
+    {
+      "id": "test_3_cases_presentation_main",
+      "label": "main()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 8,
+      "community_name": "dlkr_ljp_v5_final.py",
+      "file_type": "code",
+      "norm_label": "main()",
+      "source_file": "test_3_cases_presentation.py",
+      "source_location": "L46"
     },
     {
       "id": "dlkr_ljp_v5_final_atomiclegalfactextractor_extract",
@@ -1709,6 +1721,17 @@
       "source_location": "L2537"
     },
     {
+      "id": "llm_reasoner",
+      "label": "llm_reasoner.py",
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "QwenLegalReasoner",
+      "file_type": "code",
+      "norm_label": "llm_reasoner.py",
+      "source_file": "llm_reasoner.py",
+      "source_location": "L1"
+    },
+    {
       "id": "llm_reasoner_py_any",
       "label": "Any",
       "_origin": "ast",
@@ -1742,7 +1765,40 @@
       "source_location": ""
     },
     {
-      "id": "llm_reasoner_rationale_279",
+      "id": "llm_reasoner_rationale_1",
+      "label": "===============================================================================\u2026",
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "QwenLegalReasoner",
+      "file_type": "rationale",
+      "norm_label": "===============================================================================...",
+      "source_file": "llm_reasoner.py",
+      "source_location": "L1"
+    },
+    {
+      "id": "llm_reasoner_rationale_237",
+      "label": "Normalizes natural language IPC/BNS strings to canonical DLKR codes.",
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "QwenLegalReasoner",
+      "file_type": "rationale",
+      "norm_label": "normalizes natural language ipc/bns strings to canonical dlkr codes.",
+      "source_file": "llm_reasoner.py",
+      "source_location": "L237"
+    },
+    {
+      "id": "llm_reasoner_rationale_282",
+      "label": "Normalizes natural language penalty descriptions to canonical tiers.",
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "QwenLegalReasoner",
+      "file_type": "rationale",
+      "norm_label": "normalizes natural language penalty descriptions to canonical tiers.",
+      "source_file": "llm_reasoner.py",
+      "source_location": "L282"
+    },
+    {
+      "id": "llm_reasoner_rationale_298",
       "label": "Production-grade Legal Reasoner with 6-Tier Stealth Cascade: Tier 1:\u2026",
       "_origin": "ast",
       "community": 0,
@@ -1750,10 +1806,10 @@
       "file_type": "rationale",
       "norm_label": "production-grade legal reasoner with 6-tier stealth cascade: tier 1:...",
       "source_file": "llm_reasoner.py",
-      "source_location": "L279"
+      "source_location": "L298"
     },
     {
-      "id": "llm_reasoner_rationale_339",
+      "id": "llm_reasoner_rationale_358",
       "label": "Execute legal reasoning over case narrative. Cascade: Key 1 (Models) -> Key 2\u2026",
       "_origin": "ast",
       "community": 0,
@@ -1761,7 +1817,7 @@
       "file_type": "rationale",
       "norm_label": "execute legal reasoning over case narrative. cascade: key 1 (models) -> key 2...",
       "source_file": "llm_reasoner.py",
-      "source_location": "L339"
+      "source_location": "L358"
     },
     {
       "id": "llm_reasoner_rationale_67",
@@ -1940,17 +1996,6 @@
       "source_location": "L1"
     },
     {
-      "id": "llm_reasoner",
-      "label": "llm_reasoner.py",
-      "_origin": "ast",
-      "community": 11,
-      "community_name": "statutory_verifier.py",
-      "file_type": "code",
-      "norm_label": "llm_reasoner.py",
-      "source_file": "llm_reasoner.py",
-      "source_location": "L1"
-    },
-    {
       "id": "verification_statutory_verifier",
       "label": "statutory_verifier.py",
       "_origin": "ast",
@@ -1993,39 +2038,6 @@
       "norm_label": "generates synthetic fir narratives across the 40 statutes.",
       "source_file": "evaluate_40_accuracy.py",
       "source_location": "L102"
-    },
-    {
-      "id": "llm_reasoner_rationale_1",
-      "label": "===============================================================================\u2026",
-      "_origin": "ast",
-      "community": 11,
-      "community_name": "statutory_verifier.py",
-      "file_type": "rationale",
-      "norm_label": "===============================================================================...",
-      "source_file": "llm_reasoner.py",
-      "source_location": "L1"
-    },
-    {
-      "id": "llm_reasoner_rationale_237",
-      "label": "Normalizes natural language IPC/BNS strings to canonical DLKR codes.",
-      "_origin": "ast",
-      "community": 11,
-      "community_name": "statutory_verifier.py",
-      "file_type": "rationale",
-      "norm_label": "normalizes natural language ipc/bns strings to canonical dlkr codes.",
-      "source_file": "llm_reasoner.py",
-      "source_location": "L237"
-    },
-    {
-      "id": "llm_reasoner_rationale_263",
-      "label": "Normalizes natural language penalty descriptions to canonical tiers.",
-      "_origin": "ast",
-      "community": 11,
-      "community_name": "statutory_verifier.py",
-      "file_type": "rationale",
-      "norm_label": "normalizes natural language penalty descriptions to canonical tiers.",
-      "source_file": "llm_reasoner.py",
-      "source_location": "L263"
     },
     {
       "id": "verification_statutory_verifier_rationale_1",
@@ -3217,6 +3229,17 @@
       "source_location": "L1"
     },
     {
+      "id": "test_3_cases_presentation",
+      "label": "test_3_cases_presentation.py",
+      "_origin": "ast",
+      "community": 8,
+      "community_name": "dlkr_ljp_v5_final.py",
+      "file_type": "code",
+      "norm_label": "test_3_cases_presentation.py",
+      "source_file": "test_3_cases_presentation.py",
+      "source_location": "L1"
+    },
+    {
       "id": "dlkr_ljp_v5_final_rationale_1",
       "label": "===============================================================================\u2026",
       "_origin": "ast",
@@ -3239,7 +3262,7 @@
       "source_location": "L47"
     },
     {
-      "id": "dlkr_ljp_v5_final_rationale_4735",
+      "id": "dlkr_ljp_v5_final_rationale_4774",
       "label": "Safely processes case narrative through the DLKR-LJP pipeline. HTML-escapes all\u2026",
       "_origin": "ast",
       "community": 8,
@@ -3247,10 +3270,10 @@
       "file_type": "rationale",
       "norm_label": "safely processes case narrative through the dlkr-ljp pipeline. html-escapes all...",
       "source_file": "dlkr_ljp_v5_final.py",
-      "source_location": "L4735"
+      "source_location": "L4774"
     },
     {
-      "id": "dlkr_ljp_v5_final_rationale_4926",
+      "id": "dlkr_ljp_v5_final_rationale_4965",
       "label": "Self-healing polyfill for Gradio 4.x / 5.x / 6.x environment anomalies (e.g.\u2026",
       "_origin": "ast",
       "community": 8,
@@ -3258,10 +3281,10 @@
       "file_type": "rationale",
       "norm_label": "self-healing polyfill for gradio 4.x / 5.x / 6.x environment anomalies (e.g....",
       "source_file": "dlkr_ljp_v5_final.py",
-      "source_location": "L4926"
+      "source_location": "L4965"
     },
     {
-      "id": "dlkr_ljp_v5_final_rationale_5129",
+      "id": "dlkr_ljp_v5_final_rationale_5168",
       "label": "Direct in-file Python API: Use anywhere in scripts, notebooks, or backend apps:\u2026",
       "_origin": "ast",
       "community": 8,
@@ -3269,10 +3292,10 @@
       "file_type": "rationale",
       "norm_label": "direct in-file python api: use anywhere in scripts, notebooks, or backend apps:...",
       "source_file": "dlkr_ljp_v5_final.py",
-      "source_location": "L5129"
+      "source_location": "L5168"
     },
     {
-      "id": "dlkr_ljp_v5_final_rationale_5140",
+      "id": "dlkr_ljp_v5_final_rationale_5179",
       "label": "Zero-dependency built-in HTTP REST API Server. Endpoints: GET /health POST\u2026",
       "_origin": "ast",
       "community": 8,
@@ -3280,7 +3303,7 @@
       "file_type": "rationale",
       "norm_label": "zero-dependency built-in http rest api server. endpoints: get /health post...",
       "source_file": "dlkr_ljp_v5_final.py",
-      "source_location": "L5140"
+      "source_location": "L5179"
     },
     {
       "id": "test_25_plus_cases_rationale_1",
@@ -3291,6 +3314,17 @@
       "file_type": "rationale",
       "norm_label": "===============================================================================...",
       "source_file": "test_25_plus_cases.py",
+      "source_location": "L1"
+    },
+    {
+      "id": "test_3_cases_presentation_rationale_1",
+      "label": "===============================================================================\u2026",
+      "_origin": "ast",
+      "community": 8,
+      "community_name": "dlkr_ljp_v5_final.py",
+      "file_type": "rationale",
+      "norm_label": "===============================================================================...",
+      "source_file": "test_3_cases_presentation.py",
       "source_location": "L1"
     },
     {
@@ -3458,7 +3492,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "dlkr_ljp_v5_final.py",
-      "source_location": "L4976",
+      "source_location": "L5015",
       "weight": 1.0
     },
     {
@@ -3470,7 +3504,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "dlkr_ljp_v5_final.py",
-      "source_location": "L4978",
+      "source_location": "L5017",
       "weight": 1.0
     },
     {
@@ -3530,7 +3564,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "dlkr_ljp_v5_final.py",
-      "source_location": "L4494",
+      "source_location": "L4525",
       "weight": 1.0
     },
     {
@@ -3542,7 +3576,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "dlkr_ljp_v5_final.py",
-      "source_location": "L4495",
+      "source_location": "L4526",
       "weight": 1.0
     },
     {
@@ -3554,7 +3588,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "dlkr_ljp_v5_final.py",
-      "source_location": "L4496",
+      "source_location": "L4527",
       "weight": 1.0
     },
     {
@@ -3566,7 +3600,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "dlkr_ljp_v5_final.py",
-      "source_location": "L4497",
+      "source_location": "L4528",
       "weight": 1.0
     },
     {
@@ -3578,7 +3612,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "dlkr_ljp_v5_final.py",
-      "source_location": "L4498",
+      "source_location": "L4529",
       "weight": 1.0
     },
     {
@@ -3590,7 +3624,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "dlkr_ljp_v5_final.py",
-      "source_location": "L4499",
+      "source_location": "L4530",
       "weight": 1.0
     },
     {
@@ -3602,7 +3636,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "dlkr_ljp_v5_final.py",
-      "source_location": "L4502",
+      "source_location": "L4533",
       "weight": 1.0
     },
     {
@@ -3614,7 +3648,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "dlkr_ljp_v5_final.py",
-      "source_location": "L4608",
+      "source_location": "L4647",
       "weight": 1.0
     },
     {
@@ -3626,7 +3660,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "dlkr_ljp_v5_final.py",
-      "source_location": "L4714",
+      "source_location": "L4753",
       "weight": 1.0
     },
     {
@@ -3750,6 +3784,30 @@
       "weight": 1.0
     },
     {
+      "source": "dlkr_ljp_v5_final_multitasklegalpredictor_predict",
+      "target": "llm_reasoner_normalize_statutory_code",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "dlkr_ljp_v5_final.py",
+      "source_location": "L3688",
+      "weight": 1.0
+    },
+    {
+      "source": "dlkr_ljp_v5_final_multitasklegalpredictor_predict",
+      "target": "llm_reasoner_normalize_penalty_tier",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "dlkr_ljp_v5_final.py",
+      "source_location": "L3752",
+      "weight": 1.0
+    },
+    {
       "source": "dlkr_ljp_v5_final_multitasklegalpredictor_train_and_save_head",
       "target": "dlkr_ljp_v5_final_multitasklegalpredictor_generate_augmented_training_corpus",
       "relation": "calls",
@@ -3818,7 +3876,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "dlkr_ljp_v5_final.py",
-      "source_location": "L5135",
+      "source_location": "L5174",
       "weight": 1.0
     },
     {
@@ -3890,7 +3948,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "dlkr_ljp_v5_final.py",
-      "source_location": "L4744",
+      "source_location": "L4783",
       "weight": 1.0
     },
     {
@@ -3938,7 +3996,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "dlkr_ljp_v5_final.py",
-      "source_location": "L5147",
+      "source_location": "L5186",
       "weight": 1.0
     },
     {
@@ -3998,7 +4056,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "llm_reasoner.py",
-      "source_location": "L487",
+      "source_location": "L506",
       "weight": 1.0
     },
     {
@@ -4010,7 +4068,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "llm_reasoner.py",
-      "source_location": "L538",
+      "source_location": "L557",
       "weight": 1.0
     },
     {
@@ -4022,7 +4080,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "llm_reasoner.py",
-      "source_location": "L315",
+      "source_location": "L334",
       "weight": 1.0
     },
     {
@@ -4034,7 +4092,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "llm_reasoner.py",
-      "source_location": "L344",
+      "source_location": "L363",
       "weight": 1.0
     },
     {
@@ -4046,7 +4104,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "llm_reasoner.py",
-      "source_location": "L350",
+      "source_location": "L369",
       "weight": 1.0
     },
     {
@@ -4058,7 +4116,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "llm_reasoner.py",
-      "source_location": "L353",
+      "source_location": "L372",
       "weight": 1.0
     },
     {
@@ -4070,7 +4128,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "llm_reasoner.py",
-      "source_location": "L355",
+      "source_location": "L374",
       "weight": 1.0
     },
     {
@@ -4082,7 +4140,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "llm_reasoner.py",
-      "source_location": "L356",
+      "source_location": "L375",
       "weight": 1.0
     },
     {
@@ -4094,7 +4152,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "llm_reasoner.py",
-      "source_location": "L421",
+      "source_location": "L440",
       "weight": 1.0
     },
     {
@@ -4106,7 +4164,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "llm_reasoner.py",
-      "source_location": "L452",
+      "source_location": "L471",
       "weight": 1.0
     },
     {
@@ -4118,7 +4176,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "llm_reasoner.py",
-      "source_location": "L622",
+      "source_location": "L641",
       "weight": 1.0
     },
     {
@@ -4227,6 +4285,18 @@
       "context": "call",
       "source_file": "test_25_plus_cases.py",
       "source_location": "L102",
+      "weight": 1.0
+    },
+    {
+      "source": "test_3_cases_presentation_main",
+      "target": "dlkr_ljp_v5_final_predict_case",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "test_3_cases_presentation.py",
+      "source_location": "L61",
       "weight": 1.0
     },
     {
@@ -4586,7 +4656,7 @@
       "confidence_score": 1.0,
       "context": "generic_arg",
       "source_file": "dlkr_ljp_v5_final.py",
-      "source_location": "L4531",
+      "source_location": "L4562",
       "weight": 1.0
     },
     {
@@ -4598,7 +4668,7 @@
       "confidence_score": 1.0,
       "context": "generic_arg",
       "source_file": "dlkr_ljp_v5_final.py",
-      "source_location": "L4145",
+      "source_location": "L4176",
       "weight": 1.0
     },
     {
@@ -4610,7 +4680,7 @@
       "confidence_score": 1.0,
       "context": "generic_arg",
       "source_file": "dlkr_ljp_v5_final.py",
-      "source_location": "L4145",
+      "source_location": "L4176",
       "weight": 1.0
     },
     {
@@ -4682,7 +4752,7 @@
       "confidence_score": 1.0,
       "context": "generic_arg",
       "source_file": "dlkr_ljp_v5_final.py",
-      "source_location": "L5128",
+      "source_location": "L5167",
       "weight": 1.0
     },
     {
@@ -4874,7 +4944,7 @@
       "confidence_score": 1.0,
       "context": "generic_arg",
       "source_file": "llm_reasoner.py",
-      "source_location": "L457",
+      "source_location": "L476",
       "weight": 1.0
     },
     {
@@ -4886,7 +4956,7 @@
       "confidence_score": 1.0,
       "context": "generic_arg",
       "source_file": "llm_reasoner.py",
-      "source_location": "L493",
+      "source_location": "L512",
       "weight": 1.0
     },
     {
@@ -4898,7 +4968,7 @@
       "confidence_score": 1.0,
       "context": "generic_arg",
       "source_file": "llm_reasoner.py",
-      "source_location": "L543",
+      "source_location": "L562",
       "weight": 1.0
     },
     {
@@ -4910,7 +4980,7 @@
       "confidence_score": 1.0,
       "context": "generic_arg",
       "source_file": "llm_reasoner.py",
-      "source_location": "L814",
+      "source_location": "L833",
       "weight": 1.0
     },
     {
@@ -4922,7 +4992,7 @@
       "confidence_score": 1.0,
       "context": "generic_arg",
       "source_file": "llm_reasoner.py",
-      "source_location": "L338",
+      "source_location": "L357",
       "weight": 1.0
     },
     {
@@ -4934,7 +5004,7 @@
       "confidence_score": 1.0,
       "context": "generic_arg",
       "source_file": "llm_reasoner.py",
-      "source_location": "L600",
+      "source_location": "L619",
       "weight": 1.0
     },
     {
@@ -5047,6 +5117,30 @@
     },
     {
       "source": "dlkr_ljp_v5_final",
+      "target": "llm_reasoner_normalize_statutory_code",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "dlkr_ljp_v5_final.py",
+      "source_location": "L3687",
+      "weight": 1.0
+    },
+    {
+      "source": "dlkr_ljp_v5_final",
+      "target": "llm_reasoner_normalize_penalty_tier",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "dlkr_ljp_v5_final.py",
+      "source_location": "L3751",
+      "weight": 1.0
+    },
+    {
+      "source": "dlkr_ljp_v5_final",
       "target": "graph_engine_statutory_graph_statutoryknowledgegraph",
       "relation": "imports",
       "_origin": "ast",
@@ -5054,7 +5148,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "dlkr_ljp_v5_final.py",
-      "source_location": "L4501",
+      "source_location": "L4532",
       "weight": 1.0
     },
     {
@@ -5115,6 +5209,18 @@
       "context": "import",
       "source_file": "test_25_plus_cases.py",
       "source_location": "L31",
+      "weight": 1.0
+    },
+    {
+      "source": "test_3_cases_presentation",
+      "target": "dlkr_ljp_v5_final_predict_case",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "test_3_cases_presentation.py",
+      "source_location": "L20",
       "weight": 1.0
     },
     {
@@ -5370,6 +5476,18 @@
       "weight": 1.0
     },
     {
+      "source": "test_3_cases_presentation",
+      "target": "dlkr_ljp_v5_final",
+      "relation": "imports_from",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "test_3_cases_presentation.py",
+      "source_location": "L20",
+      "weight": 1.0
+    },
+    {
       "source": "training_train_heads",
       "target": "config",
       "relation": "imports_from",
@@ -5510,7 +5628,7 @@
       "confidence_score": 1.0,
       "context": "parameter_type",
       "source_file": "dlkr_ljp_v5_final.py",
-      "source_location": "L4628",
+      "source_location": "L4667",
       "weight": 1.0
     },
     {
@@ -5827,7 +5945,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "dlkr_ljp_v5_final.py",
-      "source_location": "L4141",
+      "source_location": "L4172",
       "weight": 1.0
     },
     {
@@ -5838,7 +5956,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "dlkr_ljp_v5_final.py",
-      "source_location": "L4492",
+      "source_location": "L4523",
       "weight": 1.0
     },
     {
@@ -5849,7 +5967,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "dlkr_ljp_v5_final.py",
-      "source_location": "L4711",
+      "source_location": "L4750",
       "weight": 1.0
     },
     {
@@ -5860,7 +5978,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "dlkr_ljp_v5_final.py",
-      "source_location": "L4734",
+      "source_location": "L4773",
       "weight": 1.0
     },
     {
@@ -5871,7 +5989,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "dlkr_ljp_v5_final.py",
-      "source_location": "L4925",
+      "source_location": "L4964",
       "weight": 1.0
     },
     {
@@ -5882,7 +6000,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "dlkr_ljp_v5_final.py",
-      "source_location": "L4973",
+      "source_location": "L5012",
       "weight": 1.0
     },
     {
@@ -5893,7 +6011,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "dlkr_ljp_v5_final.py",
-      "source_location": "L5128",
+      "source_location": "L5167",
       "weight": 1.0
     },
     {
@@ -5904,7 +6022,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "dlkr_ljp_v5_final.py",
-      "source_location": "L5139",
+      "source_location": "L5178",
       "weight": 1.0
     },
     {
@@ -5992,18 +6110,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "llm_reasoner.py",
-      "source_location": "L262",
-      "weight": 1.0
-    },
-    {
-      "source": "llm_reasoner",
-      "target": "llm_reasoner_qwenlegalreasoner",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "llm_reasoner.py",
-      "source_location": "L278",
+      "source_location": "L281",
       "weight": 1.0
     },
     {
@@ -6015,6 +6122,17 @@
       "confidence_score": 1.0,
       "source_file": "llm_reasoner.py",
       "source_location": "L29",
+      "weight": 1.0
+    },
+    {
+      "source": "llm_reasoner",
+      "target": "llm_reasoner_qwenlegalreasoner",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "llm_reasoner.py",
+      "source_location": "L297",
       "weight": 1.0
     },
     {
@@ -6491,6 +6609,17 @@
       "weight": 1.0
     },
     {
+      "source": "test_3_cases_presentation",
+      "target": "test_3_cases_presentation_main",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "test_3_cases_presentation.py",
+      "source_location": "L46",
+      "weight": 1.0
+    },
+    {
       "source": "training_train_heads",
       "target": "training_train_heads_train_mhpn_heads",
       "relation": "contains",
@@ -6806,7 +6935,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "dlkr_ljp_v5_final.py",
-      "source_location": "L4493",
+      "source_location": "L4524",
       "weight": 1.0
     },
     {
@@ -6817,7 +6946,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "dlkr_ljp_v5_final.py",
-      "source_location": "L4531",
+      "source_location": "L4562",
       "weight": 1.0
     },
     {
@@ -6828,7 +6957,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "dlkr_ljp_v5_final.py",
-      "source_location": "L4628",
+      "source_location": "L4667",
       "weight": 1.0
     },
     {
@@ -6839,7 +6968,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "dlkr_ljp_v5_final.py",
-      "source_location": "L4142",
+      "source_location": "L4173",
       "weight": 1.0
     },
     {
@@ -6850,7 +6979,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "dlkr_ljp_v5_final.py",
-      "source_location": "L4145",
+      "source_location": "L4176",
       "weight": 1.0
     },
     {
@@ -7235,7 +7364,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "llm_reasoner.py",
-      "source_location": "L289",
+      "source_location": "L308",
       "weight": 1.0
     },
     {
@@ -7246,7 +7375,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "llm_reasoner.py",
-      "source_location": "L306",
+      "source_location": "L325",
       "weight": 1.0
     },
     {
@@ -7257,7 +7386,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "llm_reasoner.py",
-      "source_location": "L314",
+      "source_location": "L333",
       "weight": 1.0
     },
     {
@@ -7268,7 +7397,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "llm_reasoner.py",
-      "source_location": "L319",
+      "source_location": "L338",
       "weight": 1.0
     },
     {
@@ -7279,7 +7408,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "llm_reasoner.py",
-      "source_location": "L338",
+      "source_location": "L357",
       "weight": 1.0
     },
     {
@@ -7290,7 +7419,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "llm_reasoner.py",
-      "source_location": "L457",
+      "source_location": "L476",
       "weight": 1.0
     },
     {
@@ -7301,7 +7430,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "llm_reasoner.py",
-      "source_location": "L493",
+      "source_location": "L512",
       "weight": 1.0
     },
     {
@@ -7312,7 +7441,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "llm_reasoner.py",
-      "source_location": "L543",
+      "source_location": "L562",
       "weight": 1.0
     },
     {
@@ -7323,7 +7452,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "llm_reasoner.py",
-      "source_location": "L600",
+      "source_location": "L619",
       "weight": 1.0
     },
     {
@@ -7334,7 +7463,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "llm_reasoner.py",
-      "source_location": "L814",
+      "source_location": "L833",
       "weight": 1.0
     },
     {
@@ -7822,47 +7951,47 @@
       "weight": 1.0
     },
     {
-      "source": "dlkr_ljp_v5_final_rationale_4735",
+      "source": "dlkr_ljp_v5_final_rationale_4774",
       "target": "dlkr_ljp_v5_final_process_case",
       "relation": "rationale_for",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "dlkr_ljp_v5_final.py",
-      "source_location": "L4735",
+      "source_location": "L4774",
       "weight": 1.0
     },
     {
-      "source": "dlkr_ljp_v5_final_rationale_4926",
+      "source": "dlkr_ljp_v5_final_rationale_4965",
       "target": "dlkr_ljp_v5_final_patch_gradio_compatibility",
       "relation": "rationale_for",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "dlkr_ljp_v5_final.py",
-      "source_location": "L4926",
+      "source_location": "L4965",
       "weight": 1.0
     },
     {
-      "source": "dlkr_ljp_v5_final_rationale_5129",
+      "source": "dlkr_ljp_v5_final_rationale_5168",
       "target": "dlkr_ljp_v5_final_predict_case",
       "relation": "rationale_for",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "dlkr_ljp_v5_final.py",
-      "source_location": "L5129",
+      "source_location": "L5168",
       "weight": 1.0
     },
     {
-      "source": "dlkr_ljp_v5_final_rationale_5140",
+      "source": "dlkr_ljp_v5_final_rationale_5179",
       "target": "dlkr_ljp_v5_final_run_http_api_server",
       "relation": "rationale_for",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "dlkr_ljp_v5_final.py",
-      "source_location": "L5140",
+      "source_location": "L5179",
       "weight": 1.0
     },
     {
@@ -7954,36 +8083,36 @@
       "weight": 1.0
     },
     {
-      "source": "llm_reasoner_rationale_263",
+      "source": "llm_reasoner_rationale_282",
       "target": "llm_reasoner_normalize_penalty_tier",
       "relation": "rationale_for",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "llm_reasoner.py",
-      "source_location": "L263",
+      "source_location": "L282",
       "weight": 1.0
     },
     {
-      "source": "llm_reasoner_rationale_279",
+      "source": "llm_reasoner_rationale_298",
       "target": "llm_reasoner_qwenlegalreasoner",
       "relation": "rationale_for",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "llm_reasoner.py",
-      "source_location": "L279",
+      "source_location": "L298",
       "weight": 1.0
     },
     {
-      "source": "llm_reasoner_rationale_339",
+      "source": "llm_reasoner_rationale_358",
       "target": "llm_reasoner_qwenlegalreasoner_reason",
       "relation": "rationale_for",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "llm_reasoner.py",
-      "source_location": "L339",
+      "source_location": "L358",
       "weight": 1.0
     },
     {
@@ -8126,6 +8255,17 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "test_25_plus_cases.py",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "test_3_cases_presentation_rationale_1",
+      "target": "test_3_cases_presentation",
+      "relation": "rationale_for",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "test_3_cases_presentation.py",
       "source_location": "L1",
       "weight": 1.0
     },
@@ -8281,7 +8421,7 @@
       "confidence_score": 0.85,
       "context": "argument",
       "source_file": "dlkr_ljp_v5_final.py",
-      "source_location": "L5101",
+      "source_location": "L5140",
       "weight": 1.0
     },
     {
@@ -8292,7 +8432,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.95,
       "source_file": "dlkr_ljp_v5_final.py",
-      "source_location": "L4502",
+      "source_location": "L4533",
       "weight": 0.8
     },
     {
@@ -8352,5 +8492,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "d10732eb338ced47a2cc679169725f33371fceea"
+  "built_at_commit": "6250a0bff1732c357fd4c63d2d918dba408fda89"
 }
